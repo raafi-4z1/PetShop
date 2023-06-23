@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/recCardListPembayaran"
+    android:layout_marginTop="10dp"
+    android:layout_marginHorizontal="15dp"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="8dp"
+    android:focusable="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp">
+
+        <TextView
+            android:id="@+id/txtNamaHewanListPembayaran"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:fontFamily="@font/muli_italic"
+            android:text="Nama Hewan"
+            android:maxLength="14"
+            android:textColor="@color/black"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/txtTanggalListPembayaran"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/txtNamaHewanListPembayaran"
+            android:layout_toStartOf="@+id/txtKeterangan"
+            android:layout_marginStart="5dp"
+            android:fontFamily="@font/muli_italic"
+            android:text="(20-06-2023)"
+            android:maxLength="12"
+            android:textColor="@color/black"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/txtKeterangan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/border_biru"
+            android:paddingHorizontal="8dp"
+            android:fontFamily="@font/muli_italic"
+            android:text="proses"
+            android:textAllCaps="true"
+            android:textColor="@color/biru"
+            android:textSize="17sp" />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

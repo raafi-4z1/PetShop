@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".penitipan.PenitipanActivity">
+
+    <LinearLayout
+        android:id="@+id/toobarPenitipan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:layout_margin="20dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/penitipan_back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_arrow_back_24"
+                android:contentDescription="@string/back"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true" />
+
+            <TextView
+                android:id="@+id/txtNameUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:fontFamily="@font/muli_semibold"
+                android:text="Nama User"
+                android:maxLength="25"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true" />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toobarPenitipan"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/rounded_background">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:fontFamily="@font/muli_bold"
+                    android:text="penitipan pet"
+                    android:textAllCaps="true"
+                    android:textSize="26sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/muli_bold"
+                    android:textColor="@color/white"
+                    android:text="@string/peringatan_penitipan"
+                    android:textSize="16sp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:padding="15dp">
+
+                    <TextView
+                        android:id="@+id/identitasTXT"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:background="@drawable/border_orange"
+                        android:paddingHorizontal="8dp"
+                        android:text="@string/identitas"
+                        android:textAllCaps="true"
+                        android:textColor="@color/orange"
+                        android:textSize="20sp" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/fullNamePenitipanContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/identitasTXT"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginVertical="10dp"
+                        android:hint="@string/full_name"
+                        app:endIconMode="clear_text"
+                        app:helperTextTextColor="@color/merah"
+                        app:startIconDrawable="@drawable/baseline_drive_file_rename_outline_24">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/txtFullNamePenitipan"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:maxLines="1"
+                            android:fontFamily="@font/muli" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="15dp">
+
+                    <TextView
+                        android:id="@+id/penitipanTXT"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:background="@drawable/border_orange"
+                        android:paddingHorizontal="8dp"
+                        android:text="penitipan"
+                        android:textAllCaps="true"
+                        android:textColor="@color/orange"
+                        android:textSize="20sp" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/namaHewanPenitipanContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/penitipanTXT"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginVertical="10dp"
+                        android:hint="Nama Hewan"
+                        app:endIconMode="clear_text"
+                        app:helperTextTextColor="@color/merah">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/txtNamaHewanPenitipan"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:maxLines="2"
+                            android:fontFamily="@font/muli" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/jenisHewanPenitipanContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/namaHewanPenitipanContainer"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentEnd="true"
+                        android:hint="Jenis Hewan"
+                        app:endIconMode="clear_text"
+                        app:helperTextTextColor="@color/merah">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/txtJenisHewanPenitipan"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:maxLines="1"
+                            android:fontFamily="@font/muli" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/jumlahPenitipanContainer"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/jenisHewanPenitipanContainer"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginVertical="10dp"
+                        android:hint="Jumlah"
+                        app:endIconMode="clear_text"
+                        app:helperTextTextColor="@color/merah">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/txtJumlahPenitipan"
+                            android:inputType="number"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:maxLines="1"
+                            android:maxLength="4"
+                            android:fontFamily="@font/muli" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tanggalMasukPenitipanContainer"
+                        android:layout_width="175dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/jumlahPenitipanContainer"
+                        android:layout_alignParentStart="true"
+                        android:hint="Tanggal Masuk"
+                        app:endIconMode="clear_text"
+                        app:helperTextTextColor="@color/merah">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/txtTanggalMasukPenitipan"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="date"
+                            android:maxLines="1"
+                            android:fontFamily="@font/muli" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tanggalKeluarPenitipanContainer"
+                        android:layout_width="175dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/jumlahPenitipanContainer"
+                        android:layout_alignParentEnd="true"
+                        android:hint="Tanggal Keluar"
+                        app:endIconMode="clear_text"
+                        app:helperTextTextColor="@color/merah">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/txtTanggalKeluarPenitipan"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="date"
+                            android:maxLines="1"
+                            android:fontFamily="@font/muli" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/btnKirim"
+                    android:layout_margin="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/hijau_putih"
+                    android:text="kirim"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+
+</RelativeLayout>
