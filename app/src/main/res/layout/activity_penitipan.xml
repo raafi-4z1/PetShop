@@ -151,7 +151,8 @@
                         android:layout_marginVertical="10dp"
                         android:hint="Nama Hewan"
                         app:endIconMode="clear_text"
-                        app:helperTextTextColor="@color/merah">
+                        app:helperTextTextColor="@color/merah"
+                        app:startIconDrawable="@drawable/ic_paw">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/txtNamaHewanPenitipan"
@@ -171,7 +172,8 @@
                         android:layout_alignParentEnd="true"
                         android:hint="Jenis Hewan"
                         app:endIconMode="clear_text"
-                        app:helperTextTextColor="@color/merah">
+                        app:helperTextTextColor="@color/merah"
+                        app:startIconDrawable="@drawable/ic_pet_house">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/txtJenisHewanPenitipan"
@@ -184,14 +186,15 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/jumlahPenitipanContainer"
-                        android:layout_width="100dp"
+                        android:layout_width="125dp"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/jenisHewanPenitipanContainer"
                         android:layout_alignParentStart="true"
                         android:layout_marginVertical="10dp"
                         android:hint="Jumlah"
                         app:endIconMode="clear_text"
-                        app:helperTextTextColor="@color/merah">
+                        app:helperTextTextColor="@color/merah"
+                        app:startIconDrawable="@drawable/ic_tally_marks">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/txtJumlahPenitipan"
@@ -212,7 +215,8 @@
                         android:layout_alignParentStart="true"
                         android:hint="Tanggal Masuk"
                         app:endIconMode="clear_text"
-                        app:helperTextTextColor="@color/merah">
+                        app:helperTextTextColor="@color/merah"
+                        app:startIconDrawable="@drawable/ic_calendar">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/txtTanggalMasukPenitipan"
@@ -232,7 +236,8 @@
                         android:layout_alignParentEnd="true"
                         android:hint="Tanggal Keluar"
                         app:endIconMode="clear_text"
-                        app:helperTextTextColor="@color/merah">
+                        app:helperTextTextColor="@color/merah"
+                        app:startIconDrawable="@drawable/ic_calendar">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/txtTanggalKeluarPenitipan"

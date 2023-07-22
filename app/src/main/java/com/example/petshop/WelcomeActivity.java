@@ -22,6 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 // https://codingwitht.com/material-design-login-screen-in-android-city-guide-part-8/
 public class WelcomeActivity extends AppCompatActivity {
@@ -36,13 +37,14 @@ public class WelcomeActivity extends AppCompatActivity {
         LocalStorage localStorage = new LocalStorage(this);
 
         if (!localStorage.getToken().isEmpty()) {
-            if (String2Date(LocalDateTime.now()
-                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+            if (Objects.requireNonNull(String2Date(LocalDateTime.now()
+                            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))))
                     .before(String2Date(localStorage.getSesi())))
             {
                 startActivity(new Intent(this, MainActivity.class));
                 finish();
             } else {
+                localStorage.setToken("");
                 Toast.makeText(this, "Sessi anda sudah habis, silahkan login kembali", Toast.LENGTH_LONG).show();
             }
         }

@@ -1,8 +1,5 @@
 package com.example.petshop.profile;
 
-import static com.example.petshop.pelengkap.Alert.alertFail;
-import static com.example.petshop.pelengkap.Alert.kode401;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -57,6 +54,53 @@ public class ProfileActivity extends AppCompatActivity {
                         -> logout())
                 .setNegativeButton("Tidak", (dialog, i) -> {})
                 .show());
+
+        getJmlHistory();
+    }
+
+    private void getJmlHistory() {
+        String url = getString(R.string.api_server) + "/user/profile";
+
+        Thread thread = new Thread(() -> {
+            Http http = new Http(this, url);
+            http.setMethod("post");
+            http.setToken(true);
+            http.send();
+
+            runOnUiThread(() -> {
+                JSONObject response = null;
+                try {
+                    response = new JSONObject(http.getResponse());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                int code = http.getStatusCode();
+                assert response != null;
+                if (code == 200) {
+                    try {
+                        JSONObject data = response.getJSONObject("data");
+
+                        TextView penitipan = findViewById(R.id.jmlPenitipan);
+                        TextView pemesanan = findViewById(R.id.jmlPemesanan);
+                        TextView transaksi = findViewById(R.id.jmlTransaksi);
+
+                        penitipan.setText(data.getString("penitipan"));
+                        pemesanan.setText(data.getString("pemesanan"));
+                        transaksi.setText(data.getString("transaksi"));
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    try {
+                        Toast.makeText(this, response.getString("message"), Toast.LENGTH_LONG).show();
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+        });
+        thread.start();
     }
 
     private void logout() {

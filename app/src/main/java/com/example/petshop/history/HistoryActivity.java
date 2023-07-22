@@ -28,9 +28,11 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class HistoryActivity extends AppCompatActivity implements ItemClickListener {
+    private Boolean isHistory = true;
     private LocalStorage localStorage;
     private HistoryAdapter historyAdapter;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,12 +42,23 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
         localStorage = new LocalStorage(this);
         TextView nameProfile = findViewById(R.id.txtNameUser);
         nameProfile.setText(localStorage.getNama());
+        isHistory = getIntent().getBooleanExtra("is_history", true);
+
+        if (!isHistory) {
+            TextView judul = findViewById(R.id.judulLayoutHistory);
+            TextView deskripsi = findViewById(R.id.deskripsiLayoutHistory);
+
+            judul.setText("Jadwal");
+            deskripsi.setText("Jadwal Anda");
+            historyAdapter = new HistoryAdapter(this, false);
+        } else {
+            historyAdapter = new HistoryAdapter(this, true);
+        }
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view_history);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 1);
         recyclerView.setLayoutManager(gridLayoutManager);
 
-        historyAdapter = new HistoryAdapter(this);
         historyAdapter.setItemClickListener(this);
         recyclerView.setAdapter(historyAdapter);
 
@@ -61,7 +74,13 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
     }
 
     private void getPemesanan() {
-        String url = getString(R.string.api_server) + "/user/viewpemesanan";
+        String url;
+        if (isHistory) {
+            url = getString(R.string.api_server) + "/user/viewpemesanan";
+        }
+        else {
+            url = getString(R.string.api_server) + "/user/viewjadwalpemesanan";
+        }
 
         @SuppressLint("NotifyDataSetChanged")
         Thread thread = new Thread(() -> {
@@ -71,53 +90,47 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
             http.send();
 
             runOnUiThread(() -> {
-                JSONObject response = null;
-                try {
-                    response = new JSONObject(http.getResponse());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
                 int code = http.getStatusCode();
-                assert response != null;
                 switch (code) {
                     case 200:
-                        try {
-                            String data = response.getJSONArray("data").toString();
-                            historyAdapter.addSingleHistory(new DataHistory(
-                                    "penanda",
-                                    null,
-                                    null,
-                                    "penanda",
-                                    null
-                            ));
+                    case 204:
+                        historyAdapter.addSingleHistory(new DataHistory(
+                                "penanda",
+                                null,
+                                null,
+                                "penanda",
+                                null
+                        ));
 
-                            if (!data.equals("[]")) {
+                        if (code != 204) {
+                            try {
+                                JSONObject response = new JSONObject(http.getResponse());
+                                String data = response.getJSONArray("data").toString();
                                 Gson gson = new Gson();
 
                                 Type dataClassType = new TypeToken<ArrayList<DataHistory>>() {}.getType();
                                 ArrayList<DataHistory> addData = gson.fromJson(data, dataClassType);
 
                                 historyAdapter.addAllHistory(addData);
-                            } else {
-                                historyAdapter.addSingleHistory(new DataHistory(
-                                        null,
-                                        null,
-                                        null,
-                                        "Tidak ada data",
-                                        "kosong"
-                                ));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-
-                            getPenitipan();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        } else {
+                            historyAdapter.addSingleHistory(new DataHistory(
+                                    null,
+                                    null,
+                                    null,
+                                    "Tidak ada data",
+                                    "kosong"
+                            ));
                         }
+
+                        getPenitipan();
 
                         break;
                     case 401:
                         try {
-                            kode401(response.getString("message"), this);
+                            kode401(new JSONObject(http.getResponse()).getString("message"), this);
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
@@ -128,7 +141,7 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
                         break;
                     default:
                         try {
-                            alertFail(response.getString("message"), this);
+                            alertFail(new JSONObject(http.getResponse()).getString("message"), this);
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
@@ -141,7 +154,12 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
     }
 
     private void getPenitipan() {
-        String url = getString(R.string.api_server) + "/user/viewpenitipan";
+        String url;
+        if (isHistory) {
+            url = getString(R.string.api_server) + "/user/viewpenitipan";
+        } else {
+            url = getString(R.string.api_server) + "/user/viewjadwalpenitipan";
+        }
 
         @SuppressLint("NotifyDataSetChanged")
         Thread thread = new Thread(() -> {
@@ -151,53 +169,48 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
             http.send();
 
             runOnUiThread(() -> {
-                JSONObject response = null;
-                try {
-                    response = new JSONObject(http.getResponse());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
                 int code = http.getStatusCode();
-                assert response != null;
                 switch (code) {
                     case 200:
-                        try {
-                            String data = response.getJSONArray("data").toString();
-                            historyAdapter.addSingleHistory(new DataHistory(
-                                    null,
-                                    "penanda",
-                                    null,
-                                    "penanda",
-                                    null
-                            ));
+                    case 204:
+                        historyAdapter.addSingleHistory(new DataHistory(
+                                null,
+                                "penanda",
+                                null,
+                                "penanda",
+                                null
+                        ));
 
-                            if (!data.equals("[]")) {
+                        if (code != 204) {
+                            try {
+                                JSONObject response = new JSONObject(http.getResponse());
+                                String data = response.getJSONArray("data").toString();
                                 Gson gson = new Gson();
 
                                 Type dataClassType = new TypeToken<ArrayList<DataHistory>>() {}.getType();
                                 ArrayList<DataHistory> addData = gson.fromJson(data, dataClassType);
 
                                 historyAdapter.addAllHistory(addData);
-                            } else {
-                                historyAdapter.addSingleHistory(new DataHistory(
-                                        null,
-                                        null,
-                                        null,
-                                        "Tidak ada data",
-                                        "kosong"
-                                ));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-
-                            getTransaksi();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        } else {
+                            historyAdapter.addSingleHistory(new DataHistory(
+                                    null,
+                                    null,
+                                    null,
+                                    "Tidak ada data",
+                                    "kosong"
+                            ));
                         }
+
+                        if (isHistory)
+                            getTransaksi();
 
                         break;
                     case 401:
                         try {
-                            kode401(response.getString("message"), this);
+                            kode401(new JSONObject(http.getResponse()).getString("message"), this);
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
@@ -208,7 +221,7 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
                         break;
                     default:
                         try {
-                            alertFail(response.getString("message"), this);
+                            alertFail(new JSONObject(http.getResponse()).getString("message"), this);
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
@@ -231,52 +244,45 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
             http.send();
 
             runOnUiThread(() -> {
-                JSONObject response = null;
-                try {
-                    response = new JSONObject(http.getResponse());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
                 int code = http.getStatusCode();
-                assert response != null;
                 switch (code) {
                     case 200:
-                        try {
-                            String data = response.getJSONArray("data").toString();
-                            historyAdapter.addSingleHistory(new DataHistory(
-                                    null,
-                                    null,
-                                    "penanda",
-                                    "penanda",
-                                    null
-                            ));
+                    case 204:
+                        historyAdapter.addSingleHistory(new DataHistory(
+                                null,
+                                null,
+                                "penanda",
+                                "penanda",
+                                null
+                        ));
 
-                            if (!data.equals("[]")) {
+                        if (code != 204) {
+                            try {
+                                JSONObject response = new JSONObject(http.getResponse());
+                                String data = response.getJSONArray("data").toString();
                                 Gson gson = new Gson();
 
                                 Type dataClassType = new TypeToken<ArrayList<DataHistory>>() {}.getType();
                                 ArrayList<DataHistory> addData = gson.fromJson(data, dataClassType);
 
                                 historyAdapter.addAllHistory(addData);
-                            } else {
-                                historyAdapter.addSingleHistory(new DataHistory(
-                                        null,
-                                        null,
-                                        null,
-                                        "Tidak ada data",
-                                        "kosong"
-                                ));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        } else {
+                            historyAdapter.addSingleHistory(new DataHistory(
+                                    null,
+                                    null,
+                                    null,
+                                    "Tidak ada data",
+                                    "kosong"
+                            ));
                         }
 
                         break;
                     case 401:
                         try {
-                            kode401(response.getString("message"), this);
+                            kode401(new JSONObject(http.getResponse()).getString("message"), this);
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
@@ -287,7 +293,7 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
                         break;
                     default:
                         try {
-                            alertFail(response.getString("message"), this);
+                            alertFail(new JSONObject(http.getResponse()).getString("message"), this);
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }

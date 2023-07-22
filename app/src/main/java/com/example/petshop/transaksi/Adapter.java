@@ -5,20 +5,17 @@ import static com.example.petshop.pelengkap.DateValidator.convertDateFormat;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.petshop.R;
+import com.example.petshop.detail.DetailItemActivity;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -54,8 +51,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
                                 "yyyy-MM-dd", "dd-MM-yyyy") + ")");
             }
 
-            if (dataList.get(position).getStatus() != null) {
-                if (Objects.equals(dataList.get(position).getStatus(), "lunas")) {
+            if (!Objects.equals(dataList.get(position).getStatus(), "WAITING")) {
+                if (Objects.equals(dataList.get(position).getStatus(), "PENDING")) {
                     holder.txtKeterangan.setText(dataList.get(position).getStatus());
                     holder.txtKeterangan.setTextColor(context.getResources().getColor(R.color.teal_200));
                     holder.txtKeterangan.setBackgroundResource(R.drawable.border_teal);
@@ -66,22 +63,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
                 }
             }
 
-            holder.recCard.setOnClickListener(v -> {
-                Log.d("TAG, onBindViewHolder: ", String.valueOf(dataList.get(holder.getAdapterPosition()).getNamaHewan()));
-                Log.d("TAG, onBindViewHolder: ", String.valueOf(dataList.get(holder.getAdapterPosition()).getStatus()));
-                Log.d("TAG, onBindViewHolder: ", String.valueOf(dataList.get(holder.getAdapterPosition()).getTglMasuk()));
-                Log.d("TAG, onBindViewHolder: ", String.valueOf(dataList.get(holder.getAdapterPosition()).getTglPemesanan()));
-                Log.d("TAG, onBindViewHolder: ", String.valueOf(dataList.get(holder.getAdapterPosition()).getTransaksi()));
-
-                if ( dataList.get(holder.getAdapterPosition()).getTransaksi() != null) {
-                    context.startActivity(new Intent(context, TransaksiActivity.class)
-                            .putExtra("idTransaksi", dataList.get(holder.getAdapterPosition()).getTransaksi()));
-                } else {
-                    Toast.makeText(context, "Tunggu Admin mengecek dan memberikan harga", Toast.LENGTH_SHORT).show();
-                }
-    //            dataList.clear();
-    //            notifyDataSetChanged();
-            });
+            holder.recCard.setOnClickListener(v ->
+                context.startActivity(new Intent(context, DetailItemActivity.class)
+                    .putExtra("id_hewan", dataList.get(holder.getAdapterPosition()).getIdHewan())
+                    .putExtra("pemesanan", dataList.get(holder.getAdapterPosition()).getTglPemesanan() != null))
+            );
 
         } else {
             holder.txtTanggal.setVisibility(View.GONE);

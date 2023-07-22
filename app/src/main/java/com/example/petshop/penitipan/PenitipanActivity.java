@@ -122,7 +122,7 @@ public class PenitipanActivity extends AppCompatActivity {
                 int code = http.getStatusCode();
                 assert response != null;
                 switch (code) {
-                    case 200:
+                    case 201:
                         try {
                             Toast.makeText(this, response.getString("data"), Toast.LENGTH_LONG).show();
                             startActivity(new Intent(this, MainActivity.class));
@@ -195,9 +195,11 @@ public class PenitipanActivity extends AppCompatActivity {
     }
 
     private CharSequence validName() {
-        String name = String.valueOf(fullName.getText());
+        String name = String.valueOf(fullName.getText()).trim();
         if (name.isEmpty())
             return "required";
+        if (name.length() < 5)
+            return "Minimum 5 Character Name";
         return null;
     }
 

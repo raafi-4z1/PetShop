@@ -2,7 +2,6 @@ package com.example.petshop.profile;
 
 import static com.example.petshop.pelengkap.Alert.alertFail;
 import static com.example.petshop.pelengkap.Alert.kode401;
-import static com.example.petshop.pelengkap.DateValidator.convertDateFormat;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,11 +9,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.WindowManager;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.petshop.LoginSignup.LoginActivity;
-import com.example.petshop.MainActivity;
 import com.example.petshop.R;
 import com.example.petshop.pelengkap.Alert;
 import com.example.petshop.pelengkap.Http;

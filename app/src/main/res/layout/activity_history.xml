@@ -60,6 +60,7 @@
             android:background="@drawable/rounded_background">
 
             <TextView
+                android:id="@+id/judulLayoutHistory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
@@ -69,6 +70,7 @@
                 android:textSize="26sp" />
 
             <TextView
+                android:id="@+id/deskripsiLayoutHistory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/muli_bold"

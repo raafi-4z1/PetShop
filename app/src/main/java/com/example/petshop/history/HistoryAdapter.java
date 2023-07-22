@@ -4,7 +4,7 @@ import static com.example.petshop.pelengkap.DateValidator.convertDateFormat;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.petshop.R;
+import com.example.petshop.detail.DetailItemActivity;
 
 import java.util.ArrayList;
 
@@ -22,12 +23,14 @@ interface ItemClickListener {
 }
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder> {
+    private final Boolean isHistory;
     private final Context context;
     private final ArrayList<DataHistory> histories;
     private ItemClickListener itemClickListener;
 
-    public HistoryAdapter(Context context) {
+    public HistoryAdapter(Context context, Boolean isHistory) {
         this.context = context;
+        this.isHistory = isHistory;
         this.histories = new ArrayList<>();
     }
 
@@ -96,10 +99,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         @SuppressLint("SetTextI18n")
         @Override
         void bind(DataHistory history) {
-            if (history.getIdPenitipan() != null) {
-                txtPenanda.setText("penitipan");
-            } else if (history.getIdTransaksi() != null)
-                txtPenanda.setText("transaksi");
+            if (history.getIdPemesanan() == null)
+                if (history.getIdPenitipan() != null) {
+                    txtPenanda.setText("penitipan");
+                } else
+                    txtPenanda.setText("transaksi");
         }
     }
 
@@ -114,22 +118,25 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         @Override
         void bind(DataHistory history) {
             if (!history.getDatetime().equals("kosong")) {
+
+                String formatInput = "yyyy-MM-dd HH:mm:ss";
+                String formatOutput = "HH:mm:ss dd-MM-yyyy";
+
+                if (!isHistory) {
+                    formatInput = "yyyy-MM-dd";
+                    formatOutput = "EEEE, d MMMM yyyy";
+                }
                 txtItemHistory.setText(history.getNamaHewa() + " (" +
                         convertDateFormat(history.getDatetime(),
-                                "yyyy-MM-dd HH:mm:ss", "HH:mm:ss dd-MM-yyyy") + ")");
+                                formatInput, formatOutput) + ")");
 
                 itemView.setOnClickListener(v -> {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
-                        itemClickListener.onItemClick(position);
-                        Log.d("TAG, bind: ", String.valueOf(position));
-    //                    if (history.getIdPemesanan() != null) {
-    //                        itemClickListener.onItemClick(position);
-    //                    } else if (history.getIdPenitipan() != null) {
-    //                        itemClickListener.onItemClick(position);
-    //                    } else if (history.getIdTransaksi() != null) {
-    //                        itemClickListener.onItemClick(position);
-    //                    }
+                        context.startActivity(new Intent(context, DetailItemActivity.class)
+                                .putExtra("id_hewan", history.getIdHewan())
+                                .putExtra("pemesanan", history.getIdPemesanan() != null)
+                        );
                     }
                 });
             } else {

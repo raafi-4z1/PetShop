@@ -1,26 +1,18 @@
 package com.example.petshop;
 
-import static android.content.ContentValues.TAG;
 import static com.example.petshop.pelengkap.Alert.alertFail;
 import static com.example.petshop.pelengkap.Alert.kode401;
 
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.ActivityOptions;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.Pair;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.petshop.LoginSignup.LoginActivity;
-import com.example.petshop.LoginSignup.SignUpActivity;
 import com.example.petshop.history.HistoryActivity;
 import com.example.petshop.pelengkap.Http;
 import com.example.petshop.pelengkap.LocalStorage;
@@ -49,8 +41,13 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.cardViewTransaksi).setOnClickListener(view 
                 -> startActivity(new Intent(getApplicationContext(), TransaksiLayout.class)));
 
-        findViewById(R.id.cardViewHistory).setOnClickListener(view 
-                -> startActivity(new Intent(getApplicationContext(), HistoryActivity.class)));
+        findViewById(R.id.cardViewJadwal).setOnClickListener(view
+                -> startActivity(new Intent(getApplicationContext(), HistoryActivity.class)
+                    .putExtra("is_history", false)));
+
+        findViewById(R.id.cardViewHistory).setOnClickListener(view
+                -> startActivity(new Intent(getApplicationContext(), HistoryActivity.class)
+                    .putExtra("is_history", true)));
 
         findViewById(R.id.cardViewLogoutDasboard).setOnClickListener(view 
                 -> new AlertDialog.Builder(MainActivity.this)

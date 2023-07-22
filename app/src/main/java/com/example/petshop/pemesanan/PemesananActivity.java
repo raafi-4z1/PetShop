@@ -4,7 +4,6 @@ import static com.example.petshop.pelengkap.Alert.alertFail;
 import static com.example.petshop.pelengkap.Alert.kode401;
 import static com.example.petshop.pelengkap.DateValidator.convertDateFormat;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -139,7 +138,7 @@ public class PemesananActivity extends AppCompatActivity {
                 int code = http.getStatusCode();
                 assert response != null;
                 switch (code) {
-                    case 200:
+                    case 201:
                         try {
                             Toast.makeText(this, response.getString("data"), Toast.LENGTH_LONG).show();
                             startActivity(new Intent(this, MainActivity.class));
@@ -224,10 +223,11 @@ public class PemesananActivity extends AppCompatActivity {
     }
 
     private CharSequence validName() {
-        String data = String.valueOf(fullName.getText());
-
+        String data = String.valueOf(fullName.getText()).trim();
         if (data.isEmpty())
             return "required";
+        if (data.length() < 5)
+            return "Minimum 5 Character Name";
         return null;
     }
 

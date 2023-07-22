@@ -15,7 +15,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PetShop"
         android:usesCleartextTraffic="true"
-        tools:targetApi="31">
+        tools:replace="android:allowBackup,android:usesCleartextTraffic"
+        tools:targetApi="31" >
+        <activity
+            android:name=".detail.DetailItemActivity"
+            android:exported="false" />
         <activity
             android:name=".profile.UpdatePasswordActivity"
             android:exported="false" />
@@ -27,9 +31,6 @@
             android:exported="false" />
         <activity
             android:name=".history.HistoryActivity"
-            android:exported="false" />
-        <activity
-            android:name=".transaksi.TransaksiActivity"
             android:exported="false" />
         <activity
             android:name=".transaksi.TransaksiLayout"

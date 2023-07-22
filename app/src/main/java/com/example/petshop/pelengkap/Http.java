@@ -14,14 +14,16 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Locale;
 
 public class Http {
-    private String method = "GET", data = null, response = null, url;
+    private String method = "GET", data = null, response = null;
+    private final String url;
     private int statusCode = 0;
     private Boolean token = false;
-    private LocalStorage localStorage;
+    private final LocalStorage localStorage;
 
     public Http(Context context, String url) {
         localStorage = new LocalStorage(context);
@@ -74,7 +76,7 @@ public class Http {
             // for https://github.com/raafi-4z1/Petshop-API-PHP-Natif-main.git
             if (data != null) {
                 OutputStream outputStream = connection.getOutputStream();
-                PrintWriter writer = new PrintWriter(new OutputStreamWriter(outputStream, "UTF-8"), true);
+                PrintWriter writer = new PrintWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8), true);
                 JSONObject jsonObject = new JSONObject(data);
 
                 Iterator<String> keys = jsonObject.keys();
@@ -101,7 +103,7 @@ public class Http {
             }
 
             BufferedReader br = new BufferedReader(isr);
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             String line;
 
             while ((line = br.readLine()) != null) {

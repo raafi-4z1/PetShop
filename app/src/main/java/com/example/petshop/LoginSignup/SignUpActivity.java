@@ -92,9 +92,11 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private CharSequence validName() {
-        String name = String.valueOf(fullName.getText());
+        String name = String.valueOf(fullName.getText()).trim();
         if (name.isEmpty())
             return "required";
+        if (name.length() < 5)
+            return "Minimum 5 Character Name";
         return null;
     }
 
@@ -197,7 +199,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                 int code = http.getStatusCode();
                 assert response != null;
-                if (code == 200) {
+                if (code == 201) {
                     try {
                         response = response.getJSONObject("data");
                         LocalStorage local = new LocalStorage(this);
