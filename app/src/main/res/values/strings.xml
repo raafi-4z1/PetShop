@@ -1,4 +1,5 @@
 <resources>
+    <string name="client_key"><!-- (client_key) client_key is mandatory --></string>
     <string name="api_server">https://petshopapi.000webhostapp.com/api</string>
 <!--http://192.168.101.90/Petshop-API-PHP-Natif-main/api-->
     <string name="app_name">PetShop</string>

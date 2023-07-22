@@ -31,15 +31,18 @@ import com.midtrans.sdk.corekit.core.TransactionRequest;
 import com.midtrans.sdk.corekit.core.themes.CustomColorTheme;
 import com.midtrans.sdk.corekit.models.BillingAddress;
 import com.midtrans.sdk.corekit.models.CustomerDetails;
+import com.midtrans.sdk.corekit.models.ExpiryModel;
 import com.midtrans.sdk.corekit.models.ItemDetails;
 import com.midtrans.sdk.corekit.models.ShippingAddress;
 import com.midtrans.sdk.corekit.models.snap.TransactionResult;
+import com.midtrans.sdk.corekit.utilities.Utils;
 import com.midtrans.sdk.uikit.SdkUIFlowBuilder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DetailItemActivity extends AppCompatActivity implements TransactionFinishedCallback {
     private boolean pemesanan = false;
@@ -85,30 +88,40 @@ public class DetailItemActivity extends AppCompatActivity implements Transaction
         ArrayList<ItemDetails> itemDetails = new ArrayList<>();
 
         itemDetails.add(detail);
-        transactionRequest.setCustomerDetails(initCustomerDetails());
-
-//        // set expiry time
-//        ExpiryModel expiryModel = new ExpiryModel();
-//
-//        // set start time
-//        long timeInMili = System.currentTimeMillis();
-//        // format the time
-//        @SuppressLint("SimpleDateFormat")
-//        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
-//        df.setTimeZone(TimeZone.getTimeZone("Asia/Jakarta"));
-//        // format the time as a string
-//        String nowAsISO = df.format(new Date(timeInMili));
-//        // set the formatted time to expiry model
-//        expiryModel.setStartTime(Utils.getFormattedTime(timeInMili));
-//        expiryModel.setDuration(1);
-//        // set time unit
-//        expiryModel.setUnit(ExpiryModel.UNIT_MINUTE);
-//        //set expiry time object to transaction request
-//        transactionRequest.setExpiry(expiryModel);
-
         transactionRequest.setItemDetails(itemDetails);
+
+        transactionRequest.setCustomerDetails(initCustomerDetails());
+        transactionRequest.setEnabledPayments(setEnabledPayments());
+        //set expiry time object to transaction request
+        transactionRequest.setExpiry(expiryModel());
+
         MidtransSDK.getInstance().setTransactionRequest(transactionRequest);
         MidtransSDK.getInstance().startPaymentUiFlow(DetailItemActivity.this);
+    }
+
+    private ExpiryModel expiryModel() {
+        // set expiry time
+        ExpiryModel expiryModel = new ExpiryModel();
+        // set the formatted time to expiry model
+        expiryModel.setStartTime(Utils.getFormattedTime(System.currentTimeMillis()));
+        expiryModel.setDuration(1);
+        // set time unit
+        expiryModel.setUnit(ExpiryModel.UNIT_HOUR);
+
+        return expiryModel;
+    }
+
+    private List<String> setEnabledPayments() {
+        // Set the payment methods
+        List<String> enabledPayments = new ArrayList<>();
+        enabledPayments.add("bank_transfer");
+        enabledPayments.add("gopay");
+        // enabledPayments.add("cstore"); // For Indomaret and Alfamart (Error saat melakukan pembayaran)
+        enabledPayments.add("shopeepay");
+        // Tidak bisa digunakan (On mobile platform you are automatically redirected to ShopeePay/GoPay Simulator.)
+        // enabledPayments.add("qris");
+        
+        return enabledPayments;
     }
 
     private CustomerDetails initCustomerDetails() {
@@ -131,7 +144,7 @@ public class DetailItemActivity extends AppCompatActivity implements Transaction
     private void initMidtransSdk() {
         String url = getString(R.string.api_server) + "/midtrans/";
         SdkUIFlowBuilder.init()
-                .setClientKey("SB-Mid-client-H5G3QBcJYRcE6cen")
+                .setClientKey(getString(R.string.client_key))
                 .setContext(DetailItemActivity.this)
                 .setTransactionFinishedCallback(this)
                 .setMerchantBaseUrl(url)
@@ -172,6 +185,8 @@ public class DetailItemActivity extends AppCompatActivity implements Transaction
                             jenisHewan = response.getString("jenis");
                             jumlahHewan = response.getString("jumlah");
                             hargaHewan = response.getString("harga");
+
+                            hargaHewan = String.valueOf(Double.parseDouble(hargaHewan) * Double.parseDouble(jumlahHewan));
 
                             String valJasaBayar = response.getString("jenis_pembayaran").equals("null") ? "-" : response.getString("jenis_pembayaran");
 
@@ -214,7 +229,7 @@ public class DetailItemActivity extends AppCompatActivity implements Transaction
                                 linearLayoutPem.removeView(btnCancel);
                                 linearLayoutPem.removeView(linearLayoutVA);
 
-                                hargaHewan = String.format("%s (Lunas)", Double.parseDouble(hargaHewan) * Double.parseDouble(jumlahHewan));
+                                hargaHewan = hargaHewan + " (Lunas)";
                                 tglBayar.setText(convertDateFormat(
                                         response.getString("tanggal_bayar"),
                                         "yyyy-MM-dd HH:mm:ss",
@@ -225,7 +240,7 @@ public class DetailItemActivity extends AppCompatActivity implements Transaction
                                 linearLayoutPem.removeView(btnBayar);
                                 linearLayoutPem.removeView(linearLayoutVA);
                             } else {
-                                totalBayar.setText(String.valueOf(Double.parseDouble(hargaHewan) * Double.parseDouble(jumlahHewan)));
+                                totalBayar.setText(hargaHewan);
                                 jasaBayar.setText(valJasaBayar);
 
                                 if (valJasaBayar.equals("-")) {
