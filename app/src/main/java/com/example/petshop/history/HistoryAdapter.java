@@ -108,24 +108,33 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     }
 
     private class ItemHistoryViewHolder extends HistoryViewHolder {
-        private final TextView txtItemHistory;
+        private final TextView txtItemHistory, txtKeteranganHistory;
         public ItemHistoryViewHolder(View view) {
             super(view);
-            txtItemHistory = view.findViewById(R.id.txtNamaHewanListPembayaran);
+            txtItemHistory = view.findViewById(R.id.txtNamaHewanListHistory);
+            txtKeteranganHistory = view.findViewById(R.id.txtKeteranganHistory);
         }
 
         @SuppressLint("SetTextI18n")
         @Override
         void bind(DataHistory history) {
             if (!history.getDatetime().equals("kosong")) {
+                String formatInput = "yyyy-MM-dd";
+                String formatOutput = "EEEE, d MMMM yyyy";
 
-                String formatInput = "yyyy-MM-dd HH:mm:ss";
-                String formatOutput = "HH:mm:ss dd-MM-yyyy";
+                if (isHistory) {
+                    formatInput = "yyyy-MM-dd HH:mm:ss";
+                    formatOutput = "HH:mm:ss dd-MM-yyyy";
 
-                if (!isHistory) {
-                    formatInput = "yyyy-MM-dd";
-                    formatOutput = "EEEE, d MMMM yyyy";
+                    if (history.getStatus() != null)
+                        if (history.getStatus().equals("CANCEL"))
+                            txtKeteranganHistory.setVisibility(View.VISIBLE);
+
+                    if (history.getStatusTransaksi() != null)
+                        if (!history.getStatus().equals("SUCCESS"))
+                            txtKeteranganHistory.setVisibility(View.VISIBLE);
                 }
+
                 txtItemHistory.setText(history.getNamaHewa() + " (" +
                         convertDateFormat(history.getDatetime(),
                                 formatInput, formatOutput) + ")");

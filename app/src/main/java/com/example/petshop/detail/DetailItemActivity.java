@@ -186,7 +186,7 @@ public class DetailItemActivity extends AppCompatActivity implements Transaction
                             jumlahHewan = response.getString("jumlah");
                             hargaHewan = response.getString("harga");
 
-                            hargaHewan = String.valueOf(Double.parseDouble(hargaHewan) * Double.parseDouble(jumlahHewan));
+                            String hargaHewanView = String.valueOf(Double.parseDouble(hargaHewan) * Double.parseDouble(jumlahHewan));
 
                             String valJasaBayar = response.getString("jenis_pembayaran").equals("null") ? "-" : response.getString("jenis_pembayaran");
 
@@ -211,6 +211,7 @@ public class DetailItemActivity extends AppCompatActivity implements Transaction
                             TextView va_number = findViewById(R.id.txtVAPembayaranDetail);
 
                             LinearLayout linearLayoutPem = findViewById(R.id.idLinearLayoutPembayaranDetail);
+                            CardView cardViewKDetail = findViewById(R.id.cardViewKeteranganDetail);
                             LinearLayout linearLayoutVA = findViewById(R.id.lLayoutVA);
 
                             if (response.getString("status_pesan").equals("CANCEL")) {
@@ -218,9 +219,9 @@ public class DetailItemActivity extends AppCompatActivity implements Transaction
                                 linearLayoutPem.removeView(btnBayar);
                                 linearLayoutPem.removeView(btnCancel);
                                 linearLayoutPem.removeView(linearLayoutVA);
+                                cardViewKDetail.setVisibility(View.VISIBLE);
                             } else {
                                 LinearLayout linearLayoutSCVW = findViewById(R.id.linearLayoutScrollViewDetail);
-                                CardView cardViewKDetail = findViewById(R.id.cardViewKeteranganDetail);
                                 linearLayoutSCVW.removeView(cardViewKDetail);
                             }
 
@@ -229,18 +230,23 @@ public class DetailItemActivity extends AppCompatActivity implements Transaction
                                 linearLayoutPem.removeView(btnCancel);
                                 linearLayoutPem.removeView(linearLayoutVA);
 
-                                hargaHewan = hargaHewan + " (Lunas)";
+                                hargaHewanView = hargaHewanView + " (Lunas)";
                                 tglBayar.setText(convertDateFormat(
                                         response.getString("tanggal_bayar"),
                                         "yyyy-MM-dd HH:mm:ss",
                                         "EEEE, d MMMM yyyy - HH:mm"));
                             }
 
+                            if (response.getString("status").equals("CANCEL")) {
+                                valJasaBayar = valJasaBayar + " (cancel)";
+                                linearLayoutPem.removeView(linearLayoutVA);
+                            }
+
                             if (hargaHewan.equals("0")) {
                                 linearLayoutPem.removeView(btnBayar);
                                 linearLayoutPem.removeView(linearLayoutVA);
                             } else {
-                                totalBayar.setText(hargaHewan);
+                                totalBayar.setText(hargaHewanView);
                                 jasaBayar.setText(valJasaBayar);
 
                                 if (valJasaBayar.equals("-")) {

@@ -99,6 +99,8 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
                                 null,
                                 null,
                                 "penanda",
+                                null,
+                                null,
                                 null
                         ));
 
@@ -121,6 +123,8 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
                                     null,
                                     null,
                                     "Tidak ada data",
+                                    null,
+                                    null,
                                     "kosong"
                             ));
                         }
@@ -178,6 +182,8 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
                                 "penanda",
                                 null,
                                 "penanda",
+                                null,
+                                null,
                                 null
                         ));
 
@@ -200,6 +206,8 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
                                     null,
                                     null,
                                     "Tidak ada data",
+                                    null,
+                                    null,
                                     "kosong"
                             ));
                         }
@@ -253,6 +261,8 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
                                 null,
                                 "penanda",
                                 "penanda",
+                                null,
+                                null,
                                 null
                         ));
 
@@ -275,6 +285,8 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
                                     null,
                                     null,
                                     "Tidak ada data",
+                                    null,
+                                    null,
                                     "kosong"
                             ));
                         }
