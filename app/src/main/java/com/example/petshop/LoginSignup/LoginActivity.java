@@ -1,17 +1,15 @@
 package com.example.petshop.LoginSignup;
 
-import static android.content.ContentValues.TAG;
-
 import static com.example.petshop.pelengkap.Alert.alertFail;
-import static com.example.petshop.pelengkap.Alert.kode401;
+import static com.example.petshop.pelengkap.Alert.loading;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.WindowManager;
@@ -19,7 +17,6 @@ import android.view.WindowManager;
 import com.example.petshop.MainActivity;
 import com.example.petshop.R;
 import com.example.petshop.WelcomeActivity;
-import com.example.petshop.pelengkap.Alert;
 import com.example.petshop.pelengkap.Http;
 import com.example.petshop.pelengkap.LocalStorage;
 import com.google.android.material.textfield.TextInputEditText;
@@ -34,8 +31,9 @@ import org.threeten.bp.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
-    TextInputEditText inpUsername, inpPassword;
-    TextInputLayout usernameContainer, passwordContainer;
+    private TextInputEditText inpUsername, inpPassword;
+    private TextInputLayout usernameContainer, passwordContainer;
+    private AlertDialog dialog;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -45,16 +43,21 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         AndroidThreeTen.init(this);
 
-        inpUsername = findViewById(R.id.txtUsernameLogin);
-        inpPassword = findViewById(R.id.txtPasswordLogin);
-        usernameContainer = findViewById(R.id.usernameLoginContainer);
-        passwordContainer = findViewById(R.id.passwordLoginContainer);
+        bindViews();
+        dialog = loading(LoginActivity.this);
 
         findViewById(R.id.login_back_button).setOnClickListener(view ->
                 startActivity(new Intent(getApplicationContext(), WelcomeActivity.class)));
 
         usernameFocusListener();
         passwordFocusListener();
+    }
+
+    private void bindViews() {
+        inpUsername = findViewById(R.id.txtUsernameLogin);
+        inpPassword = findViewById(R.id.txtPasswordLogin);
+        usernameContainer = findViewById(R.id.usernameLoginContainer);
+        passwordContainer = findViewById(R.id.passwordLoginContainer);
     }
 
     private void passwordFocusListener() {
@@ -102,6 +105,7 @@ public class LoginActivity extends AppCompatActivity {
         Boolean validPass = passwordContainer.getHelperText() == null;
 
         if (validUser && validPass) {
+            dialog.show();
             sendLogin();
         } else {
             alertFail("Tolong dicek kembali", this);
@@ -161,6 +165,7 @@ public class LoginActivity extends AppCompatActivity {
                         throw new RuntimeException(e);
                     }
                 }
+                dialog.dismiss();
                 inpUsername.setText("");
                 inpPassword.setText("");
             });

@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="5dp"
+            android:layout_marginHorizontal="5dp"
             android:layout_toStartOf="@+id/txtKeteranganHistory"
             android:fontFamily="@font/muli_italic"
             android:text="Pemesanan (datetime) Berhasil"

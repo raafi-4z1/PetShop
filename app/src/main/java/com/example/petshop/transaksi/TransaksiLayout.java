@@ -2,12 +2,14 @@ package com.example.petshop.transaksi;
 
 import static com.example.petshop.pelengkap.Alert.alertFail;
 import static com.example.petshop.pelengkap.Alert.kode401;
+import static com.example.petshop.pelengkap.Alert.loading;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -30,12 +32,16 @@ public class TransaksiLayout extends AppCompatActivity {
     private ArrayList<DataClass> dataList;
     private LocalStorage localStorage;
     private Adapter adapter = null;
+    private AlertDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.transaksi_layout);
+
+        dialog = loading(TransaksiLayout.this);
+        dialog.show();
 
         localStorage = new LocalStorage(this);
         TextView nameProfile = findViewById(R.id.txtNameUser);
@@ -49,10 +55,7 @@ public class TransaksiLayout extends AppCompatActivity {
         adapter = new Adapter(this, dataList);
         recyclerView.setAdapter(adapter);
 
-        findViewById(R.id.transaksi_back_button).setOnClickListener(view
-                -> finish());
-
-
+        findViewById(R.id.transaksi_back_button).setOnClickListener(view -> finish());
         getData();
     }
 
@@ -121,6 +124,7 @@ public class TransaksiLayout extends AppCompatActivity {
 
                         break;
                 }
+                dialog.dismiss();
             });
         });
         thread.start();

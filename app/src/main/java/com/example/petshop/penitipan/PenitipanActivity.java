@@ -6,6 +6,7 @@ import static com.example.petshop.pelengkap.DateValidator.convertDateFormat;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -25,7 +26,11 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.TimeZone;
 
 public class PenitipanActivity extends AppCompatActivity {
     private TextInputEditText fullName, namaHewan, jenis, jumlah, tglMasuk, tglKeluar;
@@ -41,6 +46,47 @@ public class PenitipanActivity extends AppCompatActivity {
         TextView nameProfile = findViewById(R.id.txtNameUser);
         nameProfile.setText(localStorage.getNama());
 
+        bindViews();
+        focusListener();
+        fullName.setText(localStorage.getNama());
+
+        tglMasuk.setOnClickListener(view -> clickTanggal(true) );
+        tglKeluar.setOnClickListener(view -> clickTanggal(false) );
+
+        findViewById(R.id.penitipan_back_button).setOnClickListener(view
+                -> finish());
+
+        findViewById(R.id.btnKirim).setOnClickListener(view
+                -> send() );
+    }
+
+    private void clickTanggal(Boolean isTglMasuk) {
+        Calendar myCalendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Jakarta"));
+
+        DatePickerDialog.OnDateSetListener datePickerListener = (view, year, month, dayOfMonth) -> {
+            myCalendar.set(Calendar.YEAR, year);
+            myCalendar.set(Calendar.MONTH, month);
+            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            setTanggal(myCalendar, isTglMasuk);
+        };
+
+        new DatePickerDialog(this, datePickerListener,
+                myCalendar.get(Calendar.YEAR),
+                myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+    }
+
+    private void setTanggal(Calendar myCalendar, Boolean isTglMasuk) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.forLanguageTag("id"));
+        String formattedDate = dateFormat.format(myCalendar.getTime());
+
+        if (isTglMasuk) {
+            tglMasuk.setText(formattedDate);
+        } else
+            tglKeluar.setText(formattedDate);
+    }
+
+    private void bindViews() {
         fullName = findViewById(R.id.txtFullNamePenitipan);
         namaHewan = findViewById(R.id.txtNamaHewanPenitipan);
         jenis = findViewById(R.id.txtJenisHewanPenitipan);
@@ -55,14 +101,9 @@ public class PenitipanActivity extends AppCompatActivity {
         tglMasukContainer = findViewById(R.id.tanggalMasukPenitipanContainer);
         tglKeluarContainer = findViewById(R.id.tanggalKeluarPenitipanContainer);
 
-        fullName.setText(localStorage.getNama());
-        focusListener();
-
-        findViewById(R.id.penitipan_back_button).setOnClickListener(view
-                -> finish());
-
-        findViewById(R.id.btnKirim).setOnClickListener(view
-                -> send() );
+        // Disable focusability of the TextInputEditText
+        tglMasuk.setFocusable(false);
+        tglKeluar.setFocusable(false);
     }
 
     private void send() {
@@ -236,7 +277,7 @@ public class PenitipanActivity extends AppCompatActivity {
         if (data.isEmpty())
             return "required";
         if (!data.matches("\\d{2}-\\d{2}-\\d{4}")) {
-            Toast.makeText(this, "format tanggal dd-mm-yyyy", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "format tanggal dd-MM-yyyy", Toast.LENGTH_LONG).show();
             return "format salah";
         }
         if (!validator.isDateValid(data))
@@ -252,7 +293,7 @@ public class PenitipanActivity extends AppCompatActivity {
         if (data.isEmpty())
             return "required";
         if (!data.matches("\\d{2}-\\d{2}-\\d{4}")) {
-            Toast.makeText(this, "format tanggal dd-mm-yyyy", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "format tanggal dd-MM-yyyy", Toast.LENGTH_LONG).show();
             return "format salah";
         }
         if (!validator.isDateValid(data))

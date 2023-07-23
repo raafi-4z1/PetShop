@@ -74,8 +74,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="15dp"
                     android:fontFamily="@font/muli_bold"
                     android:textColor="@color/white"
+                    android:gravity="center"
                     android:text="@string/peringatan"
                     android:textSize="16sp" />
 

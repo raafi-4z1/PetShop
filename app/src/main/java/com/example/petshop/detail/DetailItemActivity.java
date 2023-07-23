@@ -2,12 +2,16 @@ package com.example.petshop.detail;
 
 import static com.example.petshop.pelengkap.Alert.alertFail;
 import static com.example.petshop.pelengkap.Alert.kode401;
+import static com.example.petshop.pelengkap.Alert.loading;
 import static com.example.petshop.pelengkap.DateValidator.convertDateFormat;
+import static com.example.petshop.pelengkap.StringPhone.formatPhone;
+import static com.example.petshop.pelengkap.StringPhone.phoneNumber;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -48,13 +52,17 @@ public class DetailItemActivity extends AppCompatActivity implements Transaction
     private boolean pemesanan = false;
     private String idHewan, namaHewan, jenisHewan, jumlahHewan, hargaHewan, namaPemesan, phonePemesan, emailPemesan, alamatPemesan;
     private LocalStorage localStorage;
-    Button btnBayar, btnCancel;
+    private Button btnBayar, btnCancel;
+    private AlertDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_detail_item);
+
+        dialog = loading(DetailItemActivity.this);
+        dialog.show();
 
         pemesanan = getIntent().getBooleanExtra("pemesanan", false);
         localStorage = new LocalStorage(this);
@@ -127,7 +135,7 @@ public class DetailItemActivity extends AppCompatActivity implements Transaction
     private CustomerDetails initCustomerDetails() {
         CustomerDetails customerDetails = new CustomerDetails();
         customerDetails.setCustomerIdentifier(namaPemesan.replace(" ", "-"));
-        customerDetails.setPhone(phonePemesan);
+        customerDetails.setPhone("0" + phoneNumber(phonePemesan));
         customerDetails.setFirstName(namaPemesan);
         customerDetails.setEmail(emailPemesan);
 
@@ -186,14 +194,13 @@ public class DetailItemActivity extends AppCompatActivity implements Transaction
                             jumlahHewan = response.getString("jumlah");
                             hargaHewan = response.getString("harga");
 
-                            String hargaHewanView = String.valueOf(Double.parseDouble(hargaHewan) * Double.parseDouble(jumlahHewan));
-
-                            String valJasaBayar = response.getString("jenis_pembayaran").equals("null") ? "-" : response.getString("jenis_pembayaran");
-
-                            namaPemesan = response.getString("nama_lengkap");
+                            namaPemesan = response.getString("nama_lengkap").equals("null") ? "-" : response.getString("nama_lengkap");
                             emailPemesan = response.getString("email").equals("null") ? "-" : response.getString("email");
-                            phonePemesan = response.getString("telepon");
+                            phonePemesan = response.getString("telepon").equals("null") ? "-" : response.getString("telepon");
                             alamatPemesan = response.getString("alamat").equals("null") ? "-" : response.getString("alamat");
+
+                            String hargaHewanView = String.valueOf(Double.parseDouble(hargaHewan) * Double.parseDouble(jumlahHewan));
+                            String valJasaBayar = response.getString("jenis_pembayaran").equals("null") ? "-" : response.getString("jenis_pembayaran");
 
                             TextView hewan = findViewById(R.id.txtNamaHewanDetail);
                             TextView jenis = findViewById(R.id.txtJenisHewanDetail);
@@ -288,7 +295,7 @@ public class DetailItemActivity extends AppCompatActivity implements Transaction
                             jumlah.setText(jumlahHewan);
 
                             namaUser.setText(namaPemesan);
-                            phone.setText(phonePemesan);
+                            phone.setText("+62 " + formatPhone(phonePemesan));
                             txtEmail.setText(emailPemesan);
                             txtAlamat.setText(alamatPemesan);
                         } catch (JSONException e) {
@@ -322,6 +329,7 @@ public class DetailItemActivity extends AppCompatActivity implements Transaction
 
                         break;
                 }
+                dialog.dismiss();
             });
         });
         thread.start();
@@ -339,13 +347,18 @@ public class DetailItemActivity extends AppCompatActivity implements Transaction
     @Override
     @SuppressLint("LongLogTag")
     public void onTransactionFinished(TransactionResult result) {
+        dialog.show();
         if (result.getResponse() != null) {
             switch (result.getStatus()) {
                 case TransactionResult.STATUS_SUCCESS:
                     Toast.makeText(this, "Transaction Finished. ID: " + result.getResponse().getTransactionId(), Toast.LENGTH_LONG).show();
+                    finish();
+                    startActivity(getIntent());
                     break;
                 case TransactionResult.STATUS_PENDING:
                     Toast.makeText(this, "Transaction Pending. ID: " + result.getResponse().getTransactionId(), Toast.LENGTH_LONG).show();
+                    finish();
+                    startActivity(getIntent());
                     break;
                 case TransactionResult.STATUS_FAILED:
                     Toast.makeText(this, "Transaction Failed. ID: " + result.getResponse().getTransactionId() + ". Message: " + result.getResponse().getStatusMessage(), Toast.LENGTH_LONG).show();

@@ -6,6 +6,7 @@ import static com.example.petshop.pelengkap.DateValidator.convertDateFormat;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -26,7 +27,11 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.TimeZone;
 
 public class PemesananActivity extends AppCompatActivity {
     private LocalStorage localStorage;
@@ -38,11 +43,18 @@ public class PemesananActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_pemesanan);
-
         localStorage = new LocalStorage(this);
-        TextView nameProfile = findViewById(R.id.txtNameUser);
-        nameProfile.setText(localStorage.getNama());
 
+        bindViews();
+        setTV();
+        focusListener();
+
+        tglPesan.setOnClickListener(view -> clickTanggal());
+        findViewById(R.id.pesan_back_button).setOnClickListener(view -> finish() );
+        findViewById(R.id.btnPesan).setOnClickListener(view -> send() );
+    }
+
+    private void bindViews() {
         fullName = findViewById(R.id.txtFullNamePemesanan);
         email = findViewById(R.id.txtEmailPemesanan);
         phone = findViewById(R.id.txtPhonePemesanan);
@@ -61,18 +73,40 @@ public class PemesananActivity extends AppCompatActivity {
         jumlahContainer =  findViewById(R.id.jumlahContainer);
         tglPesanContainer = findViewById(R.id.tanggalPemesananContainer);
 
+        // Disable focusability of the TextInputEditText
+        tglPesan.setFocusable(false);
+    }
+
+    private void setTV() {
+        TextView nameProfile = findViewById(R.id.txtNameUser);
+        nameProfile.setText(localStorage.getNama());
         fullName.setText(localStorage.getNama());
         email.setText(localStorage.getEmail());
         phone.setText(localStorage.getTelepon());
         alamat.setText(localStorage.getAlamat());
+    }
 
-        focusListener();
+    private void clickTanggal() {
+        Calendar myCalendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Jakarta"));
 
-        findViewById(R.id.pesan_back_button).setOnClickListener(view
-                -> finish());
+        DatePickerDialog.OnDateSetListener datePickerListener = (view, year, month, dayOfMonth) -> {
+            myCalendar.set(Calendar.YEAR, year);
+            myCalendar.set(Calendar.MONTH, month);
+            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            setTanggal(myCalendar);
+        };
 
-        findViewById(R.id.btnPesan).setOnClickListener(view
-                -> send() );
+        new DatePickerDialog(this, datePickerListener,
+                myCalendar.get(Calendar.YEAR),
+                myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+    }
+
+    private void setTanggal(Calendar myCalendar) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.forLanguageTag("id"));
+        String formattedDate = dateFormat.format(myCalendar.getTime());
+
+        tglPesan.setText(formattedDate);
     }
 
     private void send() {
@@ -292,7 +326,7 @@ public class PemesananActivity extends AppCompatActivity {
         if (data.isEmpty())
             return "required";
         if (!data.matches("\\d{2}-\\d{2}-\\d{4}")) {
-            Toast.makeText(this, "format tanggal dd-mm-yyyy", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "format tanggal dd-MM-yyyy", Toast.LENGTH_LONG).show();
             return "format salah";
         }
         if (!validator.isDateValid(data))

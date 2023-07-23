@@ -1,11 +1,13 @@
 package com.example.petshop.LoginSignup;
 
 import static com.example.petshop.pelengkap.Alert.alertFail;
+import static com.example.petshop.pelengkap.Alert.loading;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Pair;
@@ -30,8 +32,9 @@ import org.json.JSONObject;
 import java.util.Objects;
 
 public class SignUpActivity extends AppCompatActivity {
-    TextInputEditText fullName, username, telephone, password, confirmPass;
-    TextInputLayout fullNameContainer, telephoneContainer, confirmPassContainer, usernameContainer, passwordContainer;
+    private TextInputEditText fullName, username, telephone, password, confirmPass;
+    private TextInputLayout fullNameContainer, telephoneContainer, confirmPassContainer, usernameContainer, passwordContainer;
+    private AlertDialog dialog;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -41,6 +44,16 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
         AndroidThreeTen.init(this);
 
+        bindViews();
+        dialog = loading(SignUpActivity.this);
+
+        findViewById(R.id.signup_back_button).setOnClickListener(view ->
+                startActivity(new Intent(getApplicationContext(), WelcomeActivity.class)));
+
+        focusListener();
+    }
+
+    private void bindViews() {
         fullName = findViewById(R.id.txtFullNameRegister);
         username = findViewById(R.id.txtUsernameRegister);
         telephone = findViewById(R.id.txtPhoneRegister);
@@ -52,11 +65,6 @@ public class SignUpActivity extends AppCompatActivity {
         confirmPassContainer = findViewById(R.id.confirmPasswordRegisterContainer);
         usernameContainer = findViewById(R.id.usernameRegisterContainer);
         passwordContainer = findViewById(R.id.passwordRegisterContainer);
-
-        findViewById(R.id.signup_back_button).setOnClickListener(view ->
-                startActivity(new Intent(getApplicationContext(), WelcomeActivity.class)));
-
-        focusListener();
     }
 
     private void focusListener() {
@@ -162,6 +170,7 @@ public class SignUpActivity extends AppCompatActivity {
         Boolean validConPass = confirmPassContainer.getHelperText() == null;
 
         if (validName && validUser && validPhone && validPass && validConPass) {
+            dialog.show();
             sendRegister();
         } else {
             Alert.alertFail("Tolong dicek kembali", this);
@@ -230,6 +239,7 @@ public class SignUpActivity extends AppCompatActivity {
                         throw new RuntimeException(e);
                     }
                 }
+                dialog.dismiss();
                 password.setText("");
                 confirmPass.setText("");
             });

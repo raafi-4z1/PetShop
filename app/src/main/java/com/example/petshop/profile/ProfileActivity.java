@@ -1,9 +1,12 @@
 package com.example.petshop.profile;
 
-import androidx.appcompat.app.AlertDialog;
+import static com.example.petshop.pelengkap.Alert.loading;
+import static com.example.petshop.pelengkap.StringPhone.formatPhone;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -28,17 +31,11 @@ public class ProfileActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_profile);
 
-        TextView nama = findViewById(R.id.txtNamaProfile);
-        TextView email = findViewById(R.id.txtEmailProfile);
-        TextView phone = findViewById(R.id.txtPhoneProfile);
-        TextView alamat = findViewById(R.id.txtAlamatProfile);
+        AlertDialog dialog = loading(ProfileActivity.this);
+        dialog.show();
 
         localStorage = new LocalStorage(this);
-        nama.setText(localStorage.getNama());
-        email.setText(localStorage.getEmail().isEmpty()? "email" : localStorage.getEmail());
-        String cekPhone = localStorage.getTelepon();
-        phone.setText(cekPhone.charAt(0) != '0' ? "+62 " + cekPhone : cekPhone);
-        alamat.setText(localStorage.getAlamat().isEmpty()? "alamat" : localStorage.getAlamat());
+        bindViews();
 
         findViewById(R.id.btnChangePassword).setOnClickListener(view
                 -> startActivity(new Intent(this, UpdatePasswordActivity.class)));
@@ -50,15 +47,28 @@ public class ProfileActivity extends AppCompatActivity {
                 -> new AlertDialog.Builder(this)
                 .setTitle("Konfirmasi")
                 .setMessage("Apakah anda ingin keluar dari aplikasi?")
-                .setPositiveButton("OK", (dialog, which)
+                .setPositiveButton("OK", (dialogInterface, which)
                         -> logout())
-                .setNegativeButton("Tidak", (dialog, i) -> {})
+                .setNegativeButton("Tidak", (dialogInterface, i) -> {})
                 .show());
 
-        getJmlHistory();
+        getJmlHistory(dialog);
     }
 
-    private void getJmlHistory() {
+    @SuppressLint("SetTextI18n")
+    private void bindViews() {
+        TextView nama = findViewById(R.id.txtNamaProfile);
+        TextView email = findViewById(R.id.txtEmailProfile);
+        TextView phone = findViewById(R.id.txtPhoneProfile);
+        TextView alamat = findViewById(R.id.txtAlamatProfile);
+
+        nama.setText(localStorage.getNama());
+        email.setText(localStorage.getEmail().isEmpty()? "email" : localStorage.getEmail());
+        phone.setText("+62 " + formatPhone(localStorage.getTelepon()));
+        alamat.setText(localStorage.getAlamat().isEmpty()? "alamat" : localStorage.getAlamat());
+    }
+
+    private void getJmlHistory(AlertDialog dialog) {
         String url = getString(R.string.api_server) + "/user/profile";
 
         Thread thread = new Thread(() -> {
@@ -98,6 +108,7 @@ public class ProfileActivity extends AppCompatActivity {
                         throw new RuntimeException(e);
                     }
                 }
+                dialog.dismiss();
             });
         });
         thread.start();

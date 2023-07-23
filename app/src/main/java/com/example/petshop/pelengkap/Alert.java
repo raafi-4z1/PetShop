@@ -7,8 +7,6 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.example.petshop.R;
 
-import org.json.JSONException;
-
 public class Alert {
     public static void alertFail(String s, Context context) {
         new AlertDialog.Builder(context)
@@ -23,5 +21,12 @@ public class Alert {
 
     public static void kode401 (String s, Context context) {
         Toast.makeText(context, s + ". Silahkan Login Kembali!", Toast.LENGTH_LONG).show();
+    }
+
+    public static android.app.AlertDialog loading (Context context) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
+        builder.setCancelable(false);
+        builder.setView(R.layout.progress_layout);
+        return builder.create();
     }
 }

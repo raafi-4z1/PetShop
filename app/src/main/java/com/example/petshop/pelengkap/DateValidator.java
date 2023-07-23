@@ -51,7 +51,7 @@ public class DateValidator {
     public static String convertDateFormat(String inputDate, String formatInput, String formatOutput) {
         try {
             SimpleDateFormat inputFormat = new SimpleDateFormat(formatInput, Locale.getDefault());
-            SimpleDateFormat outputFormat = new SimpleDateFormat(formatOutput, Locale.getDefault());
+            SimpleDateFormat outputFormat = new SimpleDateFormat(formatOutput, Locale.forLanguageTag("id"));
 
             Date date = inputFormat.parse(inputDate);
             assert date != null;

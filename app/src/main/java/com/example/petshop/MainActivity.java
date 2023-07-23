@@ -2,10 +2,11 @@ package com.example.petshop;
 
 import static com.example.petshop.pelengkap.Alert.alertFail;
 import static com.example.petshop.pelengkap.Alert.kode401;
+import static com.example.petshop.pelengkap.Alert.loading;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -32,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
+        AlertDialog dialog = loading(MainActivity.this);
+        dialog.show();
+
         findViewById(R.id.cardViewPemesanan).setOnClickListener(view 
                 -> startActivity(new Intent(getApplicationContext(), PemesananActivity.class)));
 
@@ -53,15 +57,15 @@ public class MainActivity extends AppCompatActivity {
                 -> new AlertDialog.Builder(MainActivity.this)
                 .setTitle("Konfirmasi")
                 .setMessage("Apakah anda ingin keluar dari aplikasi?")
-                .setPositiveButton("OK", (dialog, which)
+                .setPositiveButton("OK", (dialogInterface, which)
                         -> logout())
-                .setNegativeButton("Tidak", (dialog, i) -> {})
+                .setNegativeButton("Tidak", (dialogInterface, i) -> {})
                 .show());
 
         findViewById(R.id.cardViewUser).setOnClickListener(view
                 -> startActivity(new Intent(getApplicationContext(), ProfileActivity.class)));
 
-        getHome();
+        getHome(dialog);
     }
 
     private void logout() {
@@ -106,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         thread.start();
     }
 
-    private void getHome() {
+    private void getHome(AlertDialog dialog) {
         String url = getString(R.string.api_server) + "/user/home";
 
         Thread thread = new Thread(() -> {
@@ -142,9 +146,9 @@ public class MainActivity extends AppCompatActivity {
                                 new AlertDialog.Builder(MainActivity.this)
                                         .setTitle("Konfirmasi")
                                         .setMessage("Apakah anda ingin update Profile?")
-                                        .setPositiveButton("OK", (dialog, which)
+                                        .setPositiveButton("OK", (dialogInterface, which)
                                                 -> startActivity(new Intent(getApplicationContext(), ProfileActivity.class)))
-                                        .setNegativeButton("Tidak", (dialog, i) -> {})
+                                        .setNegativeButton("Tidak", (dialogInterface, i) -> {})
                                         .show();
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -172,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
             });
+            dialog.dismiss();
         });
         thread.start();
     }
