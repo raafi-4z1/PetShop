@@ -4,10 +4,6 @@ import static com.example.petshop.pelengkap.Alert.alertFail;
 import static com.example.petshop.pelengkap.Alert.kode401;
 import static com.example.petshop.pelengkap.Alert.loading;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -15,6 +11,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.petshop.LoginSignup.LoginActivity;
 import com.example.petshop.R;
@@ -68,9 +68,7 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
         historyAdapter.setItemClickListener(this);
         recyclerView.setAdapter(historyAdapter);
 
-        findViewById(R.id.history_back_button).setOnClickListener(view
-                -> finish());
-
+        findViewById(R.id.history_back_button).setOnClickListener(view -> finish());
         getPemesanan();
     }
 

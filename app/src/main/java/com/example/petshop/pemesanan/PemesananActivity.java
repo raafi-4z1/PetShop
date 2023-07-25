@@ -4,8 +4,6 @@ import static com.example.petshop.pelengkap.Alert.alertFail;
 import static com.example.petshop.pelengkap.Alert.kode401;
 import static com.example.petshop.pelengkap.DateValidator.convertDateFormat;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,13 +12,15 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.petshop.LoginSignup.LoginActivity;
-import com.example.petshop.MainActivity;
 import com.example.petshop.R;
 import com.example.petshop.pelengkap.Alert;
 import com.example.petshop.pelengkap.DateValidator;
 import com.example.petshop.pelengkap.Http;
 import com.example.petshop.pelengkap.LocalStorage;
+import com.example.petshop.transaksi.TransaksiLayout;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -175,7 +175,8 @@ public class PemesananActivity extends AppCompatActivity {
                     case 201:
                         try {
                             Toast.makeText(this, response.getString("data"), Toast.LENGTH_LONG).show();
-                            startActivity(new Intent(this, MainActivity.class));
+                            startActivity(new Intent(this, TransaksiLayout.class));
+                            finish();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -329,7 +330,7 @@ public class PemesananActivity extends AppCompatActivity {
             Toast.makeText(this, "format tanggal dd-MM-yyyy", Toast.LENGTH_LONG).show();
             return "format salah";
         }
-        if (!validator.isDateValid(data))
+        if (validator.isdateValid(data))
             return "tanggal tidak valid";
         return null;
     }

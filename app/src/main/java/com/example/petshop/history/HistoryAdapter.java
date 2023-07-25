@@ -131,7 +131,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
                             txtKeteranganHistory.setVisibility(View.VISIBLE);
 
                     if (history.getStatusTransaksi() != null)
-                        if (!history.getStatus().equals("SUCCESS"))
+                        if (!history.getStatusTransaksi().equals("SUCCESS"))
                             txtKeteranganHistory.setVisibility(View.VISIBLE);
                 }
 

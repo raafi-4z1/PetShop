@@ -9,6 +9,17 @@ import java.util.Locale;
 public class DateValidator {
     int day, month, year;
 
+    public static Date String2Date(String dateString) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        try {
+            return inputFormat.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     private Calendar getCalendarFromDate(String inputDate) {
         String[] dateParts = inputDate.split("-");
         day = Integer.parseInt(dateParts[0]);
@@ -32,15 +43,15 @@ public class DateValidator {
                 && inputCalendar.compareTo(currentCalendar) >= 0;
     }
 
-    public boolean isDateValid(String inputDate) {
+    public boolean isdateValid(String inputDate) {
         Calendar inputCalendar = getCalendarFromDate(inputDate);
         Calendar currentCalendar = Calendar.getInstance();
 
         // Periksa apakah tanggal yang diinput valid dan lebih besar atau sama dengan tanggal sekarang
-        return day == inputCalendar.get(Calendar.DAY_OF_MONTH) &&
-                month - 1 == inputCalendar.get(Calendar.MONTH) &&
-                year == inputCalendar.get(Calendar.YEAR) &&
-                inputCalendar.compareTo(currentCalendar) >= 0;
+        return day != inputCalendar.get(Calendar.DAY_OF_MONTH) ||
+                month - 1 != inputCalendar.get(Calendar.MONTH) ||
+                year != inputCalendar.get(Calendar.YEAR) ||
+                inputCalendar.compareTo(currentCalendar) < 0;
     }
 
     // untuk mengatasi parameter default untuk metode pada java

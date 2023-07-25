@@ -1,6 +1,6 @@
 package com.example.petshop;
 
-import androidx.appcompat.app.AppCompatActivity;
+import static com.example.petshop.pelengkap.DateValidator.String2Date;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.petshop.LoginSignup.LoginActivity;
 import com.example.petshop.LoginSignup.SignUpActivity;
 import com.example.petshop.pelengkap.LocalStorage;
@@ -18,10 +20,6 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 import java.util.Objects;
 
 // https://codingwitht.com/material-design-login-screen-in-android-city-guide-part-8/
@@ -70,16 +68,5 @@ public class WelcomeActivity extends AppCompatActivity {
 
         ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(WelcomeActivity.this, pairs);
         startActivity(intent, options.toBundle());
-    }
-
-    private Date String2Date(String dateString) {
-        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        try {
-            return inputFormat.parse(dateString);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return null;
     }
 }

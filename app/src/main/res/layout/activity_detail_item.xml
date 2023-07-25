@@ -74,7 +74,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:textColor="@color/red"
+                    android:textColor="@color/merah"
                     android:text="cancel / full order"
                     android:textAllCaps="true"
                     android:textSize="20sp" />
@@ -274,7 +274,7 @@
                         android:layout_height="wrap_content"
                         android:onClick="JadwalkanLagi"
                         android:layout_margin="15dp"
-                        android:background="#E6F2FE"
+                        android:background="#31E6F2FE"
                         android:textColor="#1A7EDE"
                         android:text="Jadwalkan Lagi"
                         android:textAllCaps="false"/>
@@ -529,7 +529,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="15dp"
-                        android:background="#E6F2FE"
+                        android:background="#31E6F2FE"
                         android:textColor="#1A7EDE"
                         android:text="Bayar"
                         android:textAllCaps="false"/>
@@ -541,7 +541,7 @@
                         android:layout_marginHorizontal="15dp"
                         android:layout_marginBottom="15dp"
                         android:background="@color/transparan"
-                        android:textColor="@color/red"
+                        android:textColor="@color/merah"
                         android:text="Cancel"
                         android:textAllCaps="false"/>
 
