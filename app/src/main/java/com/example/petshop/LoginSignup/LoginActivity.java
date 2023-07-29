@@ -2,8 +2,7 @@ package com.example.petshop.LoginSignup;
 
 import static com.example.petshop.pelengkap.Alert.alertFail;
 import static com.example.petshop.pelengkap.Alert.loading;
-
-import androidx.appcompat.app.AppCompatActivity;
+import static com.example.petshop.pelengkap.KeyStoreHelper.*;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
@@ -13,6 +12,9 @@ import android.os.Bundle;
 import android.util.Pair;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.CheckBox;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.petshop.MainActivity;
 import com.example.petshop.R;
@@ -33,7 +35,9 @@ import java.util.Objects;
 public class LoginActivity extends AppCompatActivity {
     private TextInputEditText inpUsername, inpPassword;
     private TextInputLayout usernameContainer, passwordContainer;
+    private LocalStorage local;
     private AlertDialog dialog;
+    private CheckBox checkBox;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -43,8 +47,11 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         AndroidThreeTen.init(this);
 
-        bindViews();
+        local = new LocalStorage(this);
         dialog = loading(LoginActivity.this);
+
+        checkBox = findViewById(R.id.ckBoxLogin);
+        bindViews();
 
         findViewById(R.id.login_back_button).setOnClickListener(view ->
                 startActivity(new Intent(getApplicationContext(), WelcomeActivity.class)));
@@ -58,6 +65,30 @@ public class LoginActivity extends AppCompatActivity {
         inpPassword = findViewById(R.id.txtPasswordLogin);
         usernameContainer = findViewById(R.id.usernameLoginContainer);
         passwordContainer = findViewById(R.id.passwordLoginContainer);
+
+        if (local.getRemember()) {
+            checkBox.setChecked(true);
+            String userStr = local.getUsername(), passStr = local.getPassword();
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O &&
+                    !Objects.equals(local.getKey(), "null")) {
+                try {
+                    userStr = encryptionOrDecryptionAES(
+                            userStr,
+                            decodeKeyFromString(local.getKey()),
+                            false);
+                    passStr = encryptionOrDecryptionAES(
+                            passStr,
+                            decodeKeyFromString(local.getKey()),
+                            false);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            inpUsername.setText(userStr);
+            inpPassword.setText(passStr);
+        }
     }
 
     private void passwordFocusListener() {
@@ -97,6 +128,7 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
+    @SuppressLint("LongLogTag")
     public void letTheUserLoggedIn(View view) {
         usernameContainer.setHelperText(validUsername());
         passwordContainer.setHelperText(validPassword());
@@ -114,9 +146,12 @@ public class LoginActivity extends AppCompatActivity {
 
     private void sendLogin() {
         JSONObject params = new JSONObject();
+        String userString = Objects.requireNonNull(inpUsername.getText()).toString();
+        String passString = Objects.requireNonNull(inpPassword.getText()).toString();
+
         try {
-            params.put("username", inpUsername.getText());
-            params.put("password", inpPassword.getText());
+            params.put("username", userString);
+            params.put("password", passString);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -143,9 +178,30 @@ public class LoginActivity extends AppCompatActivity {
                 if (code == 200) {
                     try {
                         response = response.getJSONObject("data");
-                        LocalStorage local = new LocalStorage(this);
+
                         local.setToken(response.getString("token"));
                         local.setSesi(LocalDateTime.now().plusDays(5).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+                        local.setRemember(checkBox.isChecked());
+
+                        if (checkBox.isChecked()) {
+                            String encryptPass, encryptUser;
+
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                                if (Objects.equals(local.getKey(), "null"))
+                                    local.setKey(encodeKeyToString(getOrCreateSecretKey()));
+
+                                encryptUser = encryptionOrDecryptionAES(userString,
+                                        decodeKeyFromString(local.getKey()), true);
+                                encryptPass = encryptionOrDecryptionAES(passString,
+                                        decodeKeyFromString(local.getKey()), true);
+                            } else {
+                                encryptUser = userString;
+                                encryptPass = passString;
+                            }
+
+                            local.setUsername(encryptUser);
+                            local.setPassword(encryptPass);
+                        }
 
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 
@@ -157,6 +213,8 @@ public class LoginActivity extends AppCompatActivity {
                         finish();
                     } catch (JSONException e) {
                         e.printStackTrace();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
                     }
                 } else {
                     try {

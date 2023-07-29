@@ -2,13 +2,15 @@ package com.example.petshop.profile;
 
 import static com.example.petshop.pelengkap.Alert.alertFail;
 import static com.example.petshop.pelengkap.Alert.kode401;
-
-import androidx.appcompat.app.AppCompatActivity;
+import static com.example.petshop.pelengkap.KeyStoreHelper.decodeKeyFromString;
+import static com.example.petshop.pelengkap.KeyStoreHelper.encryptionOrDecryptionAES;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.petshop.LoginSignup.LoginActivity;
 import com.example.petshop.R;
@@ -68,9 +70,10 @@ public class UpdatePasswordActivity extends AppCompatActivity {
 
     private void sendUpdate() {
         JSONObject params = new JSONObject();
+        String newPassStr = Objects.requireNonNull(newPassword.getText()).toString();
         try {
             params.put("oldPassword", Objects.requireNonNull(oldPassword.getText()).toString());
-            params.put("newPassword", Objects.requireNonNull(newPassword.getText()).toString());
+            params.put("newPassword", newPassStr);
             params.put("confirmNewPassword", Objects.requireNonNull(confirmPass.getText()).toString());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -93,16 +96,30 @@ public class UpdatePasswordActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                LocalStorage local = new LocalStorage(this);
 
                 int code = http.getStatusCode();
                 assert response != null;
                 switch (code) {
                     case 200:
                         try {
+                            if (local.getRemember()) {
+                                String encrypt;
+                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                                    encrypt = encryptionOrDecryptionAES(newPassStr,
+                                            decodeKeyFromString(local.getKey()), true);
+                                } else
+                                    encrypt = newPassStr;
+
+                                local.setPassword(encrypt);
+                            }
+
                             Toast.makeText(this, response.getString("data"), Toast.LENGTH_LONG).show();
                             finish();
                         } catch (JSONException e) {
                             e.printStackTrace();
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
                         }
 
                         break;
@@ -112,7 +129,6 @@ public class UpdatePasswordActivity extends AppCompatActivity {
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
-                        LocalStorage local = new LocalStorage(this);
                         local.setToken("");
                         startActivity(new Intent(this, LoginActivity.class));
                         finish();

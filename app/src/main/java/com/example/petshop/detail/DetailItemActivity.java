@@ -8,7 +8,11 @@ import static com.example.petshop.pelengkap.StringPhone.formatPhone;
 import static com.example.petshop.pelengkap.StringPhone.phoneNumber;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -282,22 +286,18 @@ public class DetailItemActivity extends AppCompatActivity implements Transaction
         String valJasaBayar = response.getString("jenis_pembayaran").equals("null") ? "-" : response.getString("jenis_pembayaran");
 
         TextView tglMasuk = findViewById(R.id.txtTglMasukDetail);
-
         TextView totalBayar = findViewById(R.id.txtTotalBayarDetail);
-        TextView jasaBayar = findViewById(R.id.txtJasaBayarDetail);
-        TextView tglBayar = findViewById(R.id.txtTanggalBayarDetail);
-        TextView va_number = findViewById(R.id.txtVAPembayaranDetail);
 
         LinearLayout linearLayoutPem = findViewById(R.id.idLinearLayoutPembayaranDetail);
         CardView cardViewKDetail = findViewById(R.id.cardViewKeteranganDetail);
-        LinearLayout linearLayoutVA = findViewById(R.id.lLayoutVA);
+        RelativeLayout relativeLayoutVA = findViewById(R.id.rLayoutVA);
 
         boolean stsPesRes = response.getString("status_pesan").equals("CANCEL");
         if (stsPesRes) {
             totalBayar.setText("-");
             linearLayoutPem.removeView(btnBayar);
             linearLayoutPem.removeView(btnCancel);
-            linearLayoutPem.removeView(linearLayoutVA);
+            linearLayoutPem.removeView(relativeLayoutVA);
             cardViewKDetail.setVisibility(View.VISIBLE);
         } else {
             LinearLayout linearLayoutSCVW = findViewById(R.id.linearLayoutScrollViewDetail);
@@ -308,28 +308,51 @@ public class DetailItemActivity extends AppCompatActivity implements Transaction
         if (statusRes.equals("SUCCESS")) {
             linearLayoutPem.removeView(btnBayar);
             linearLayoutPem.removeView(btnCancel);
-            linearLayoutPem.removeView(linearLayoutVA);
+            linearLayoutPem.removeView(relativeLayoutVA);
 
+            TextView tglBayar = findViewById(R.id.txtTanggalBayarDetail);
             hargaHewanView = hargaHewanView + " (Lunas)";
+
             tglBayar.setText(convertDateFormat(response.getString("tanggal_bayar"),
                     "yyyy-MM-dd HH:mm:ss", "EEEE, d MMMM yyyy - HH:mm"));
         } else if (statusRes.equals("CANCEL")) {
             valJasaBayar = valJasaBayar + " (cancel)";
-            linearLayoutPem.removeView(linearLayoutVA);
+            linearLayoutPem.removeView(relativeLayoutVA);
         }
 
         if (hargaHewan.equals("0")) {
             linearLayoutPem.removeView(btnBayar);
-            linearLayoutPem.removeView(linearLayoutVA);
+            linearLayoutPem.removeView(relativeLayoutVA);
         } else {
-            totalBayar.setText(hargaHewanView);
+            TextView jasaBayar = findViewById(R.id.txtJasaBayarDetail);
+
+            totalBayar.setText("Rp. " + hargaHewanView);
             jasaBayar.setText(valJasaBayar);
 
             if (valJasaBayar.equals("-")) {
-                linearLayoutPem.removeView(linearLayoutVA);
+                linearLayoutPem.removeView(relativeLayoutVA);
             } else {
-                va_number.setText(response.getString("va_number").equals("null") ?
-                        "-" : response.getString("va_number"));
+                CardView copy = findViewById(R.id.ivCopyDetail);
+                TextView va_number = findViewById(R.id.txtVAPembayaranDetail);
+                String va = response.getString("va_number").equals("null") ?
+                        "-" : response.getString("va_number");
+
+                if (va.equals("-")) {
+                    relativeLayoutVA.removeView(copy);
+                } else {
+                    String finalValJasaBayar = valJasaBayar;
+                    copy.setOnClickListener(view -> {
+                        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData clip = ClipData.newPlainText(String.format("virtual account %s",
+                                finalValJasaBayar), va);
+                        clipboard.setPrimaryClip(clip);
+                        // Only show a toast for Android 12 and lower.
+                        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2)
+                            Toast.makeText(this, "Copied", Toast.LENGTH_SHORT).show();
+                    });
+                    va_number.setText(va);
+                }
+
                 btnBayar.setText("Ganti Metode Pembayaran");
             }
         }

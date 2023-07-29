@@ -53,10 +53,28 @@ public class LocalStorage {
     }
 
     public String getSesi() {
-        return sharedPreferences.getString("sesiBerakhir", "");
+        return sharedPreferences.getString("sesi_berakhir", "");
     }
 
     public void setSesi(String sesi_berakhir) {
-        editor.putString("sesiBerakhir", sesi_berakhir).commit();
+        editor.putString("sesi_berakhir", sesi_berakhir).commit();
     }
+
+    public void setRemember(Boolean value) {
+        editor.putBoolean("remember", value).commit();
+    }
+
+    public Boolean getRemember() { return sharedPreferences.getBoolean("remember", false); }
+
+    public void setKey(String value) { editor.putString("petshop_key_store", value).commit(); }
+
+    public String getKey() { return sharedPreferences.getString("petshop_key_store", "null"); }
+
+    public void setUsername(String value) { editor.putString("username", value).commit(); }
+
+    public String getUsername() { return sharedPreferences.getString("username", ""); }
+
+    public void setPassword(String value) { editor.putString("password", value).commit(); }
+
+    public String getPassword() { return sharedPreferences.getString("password", ""); }
 }
