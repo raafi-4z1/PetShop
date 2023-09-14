@@ -5,9 +5,12 @@ import static com.example.petshop.pelengkap.Alert.kode401;
 import static com.example.petshop.pelengkap.DateValidator.convertDateFormat;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowManager;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +36,9 @@ import java.util.Objects;
 import java.util.TimeZone;
 
 public class PenitipanActivity extends AppCompatActivity {
-    private TextInputEditText fullName, namaHewan, jenis, jumlah, tglMasuk, tglKeluar;
+    private TextInputEditText fullName, namaHewan, jumlah, tglMasuk, tglKeluar;
+    private RadioGroup jenis;
+    private RadioButton selectedRadioButton;
     private TextInputLayout fullNameContainer, namaHewanContainer, jenisContainer, jumlahContainer, tglMasukContainer, tglKeluarContainer;
 
     @Override
@@ -48,7 +53,19 @@ public class PenitipanActivity extends AppCompatActivity {
 
         bindViews();
         focusListener();
-        fullName.setText(localStorage.getNama());
+
+        if (getIntent().getBooleanExtra("jadwalkanLagi", false)) {
+            fullName.setText(getIntent().getStringExtra("namaPemesan"));
+            namaHewan.setText(getIntent().getStringExtra("namaHewan"));
+            jumlah.setText(getIntent().getStringExtra("jumlahHewan"));
+
+            if (getIntent().getStringExtra("jenisHewan").equals("Kucing")) {
+                jenis.check(R.id.radioButtonKucing);
+            } else {
+                jenis.check(R.id.radioButtonAnjing);
+            }
+        } else
+            fullName.setText(localStorage.getNama());
 
         tglMasuk.setOnClickListener(view -> clickTanggal(true) );
         tglKeluar.setOnClickListener(view -> clickTanggal(false) );
@@ -67,7 +84,7 @@ public class PenitipanActivity extends AppCompatActivity {
             myCalendar.set(Calendar.YEAR, year);
             myCalendar.set(Calendar.MONTH, month);
             myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            setTanggal(myCalendar, isTglMasuk);
+            showTimePicker(myCalendar, isTglMasuk);
         };
 
         new DatePickerDialog(this, datePickerListener,
@@ -76,20 +93,34 @@ public class PenitipanActivity extends AppCompatActivity {
                 myCalendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
-    private void setTanggal(Calendar myCalendar, Boolean isTglMasuk) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.forLanguageTag("id"));
-        String formattedDate = dateFormat.format(myCalendar.getTime());
+    private void showTimePicker(Calendar myCalendar, Boolean isTglMasuk) {
+        int hour = myCalendar.get(Calendar.HOUR_OF_DAY);
+        int minute = myCalendar.get(Calendar.MINUTE);
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this, (view, hourOfDay, minuteOfDay) -> {
+            myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            myCalendar.set(Calendar.MINUTE, minuteOfDay);
+            setDateTime(myCalendar, isTglMasuk);
+        }, hour, minute, true);
+
+        timePickerDialog.show();
+    }
+
+    private void setDateTime(Calendar myCalendar, Boolean isTglMasuk) {
+        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy", Locale.forLanguageTag("id"));
+        String formattedDateTime = dateTimeFormat.format(myCalendar.getTime());
 
         if (isTglMasuk) {
-            tglMasuk.setText(formattedDate);
-        } else
-            tglKeluar.setText(formattedDate);
+            tglMasuk.setText(formattedDateTime);
+        } else {
+            tglKeluar.setText(formattedDateTime);
+        }
     }
 
     private void bindViews() {
         fullName = findViewById(R.id.txtFullNamePenitipan);
         namaHewan = findViewById(R.id.txtNamaHewanPenitipan);
-        jenis = findViewById(R.id.txtJenisHewanPenitipan);
+        jenis = findViewById(R.id.radioGroupJenisHewanPenitipan);
         jumlah =  findViewById(R.id.txtJumlahPenitipan);
         tglMasuk = findViewById(R.id.txtTanggalMasukPenitipan);
         tglKeluar = findViewById(R.id.txtTanggalKeluarPenitipan);
@@ -133,10 +164,10 @@ public class PenitipanActivity extends AppCompatActivity {
         try {
             params.put("full_name", Objects.requireNonNull(fullName.getText()).toString());
             params.put("nama_hewan", Objects.requireNonNull(namaHewan.getText()).toString());
-            params.put("jenis_hewan", Objects.requireNonNull(jenis.getText()).toString());
+            params.put("jenis_hewan", selectedRadioButton.getText().toString());
             params.put("jumlah", Objects.requireNonNull(jumlah.getText()).toString());
-            params.put("tgl_masuk", convertDateFormat(Objects.requireNonNull(tglMasuk.getText()).toString()));
-            params.put("tgl_keluar", convertDateFormat(Objects.requireNonNull(tglKeluar.getText()).toString()));
+            params.put("tgl_masuk", convertDateFormat(Objects.requireNonNull(tglMasuk.getText()).toString(), "HH:mm:ss dd-MM-yyyy", "yyyy-MM-dd HH:mm:ss"));
+            params.put("tgl_keluar", convertDateFormat(Objects.requireNonNull(tglKeluar.getText()).toString(), "HH:mm:ss dd-MM-yyyy", "yyyy-MM-dd HH:mm:ss"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -254,10 +285,11 @@ public class PenitipanActivity extends AppCompatActivity {
     }
 
     private CharSequence validJenis() {
-        String data = String.valueOf(jenis.getText());
-
-        if (data.isEmpty())
+        int selectRBById = jenis.getCheckedRadioButtonId();
+        if (selectRBById == -1)
             return "required";
+
+        selectedRadioButton = findViewById(selectRBById);
         return null;
     }
 
@@ -277,31 +309,33 @@ public class PenitipanActivity extends AppCompatActivity {
 
         if (data.isEmpty())
             return "required";
-        if (!data.matches("\\d{2}-\\d{2}-\\d{4}")) {
-            Toast.makeText(this, "format tanggal dd-MM-yyyy", Toast.LENGTH_LONG).show();
+        if (!data.matches("\\d{2}:\\d{2}:\\d{2} \\d{2}-\\d{2}-\\d{4}")) {
+            // Regex pattern for "HH:mm:ss dd-MM-yyyy"
+            Toast.makeText(this, "format tanggal HH:mm:ss dd-MM-yyyy", Toast.LENGTH_LONG).show();
             return "format salah";
         }
-        if (validator.isdateValid(data))
-            return "tanggal tidak valid";
+        if (!DateValidator.isdateTimeValid(data))
+            return "DateTime tidak valid";
+
         return null;
     }
 
     private CharSequence validTglKeluar() {
         String dataTglMasuk = String.valueOf(tglMasuk.getText());
         String data = String.valueOf(tglKeluar.getText());
-        DateValidator validator = new DateValidator();
 
         if (data.isEmpty())
             return "required";
-        if (!data.matches("\\d{2}-\\d{2}-\\d{4}")) {
-            Toast.makeText(this, "format tanggal dd-MM-yyyy", Toast.LENGTH_LONG).show();
+        if (!data.matches("\\d{2}:\\d{2}:\\d{2} \\d{2}-\\d{2}-\\d{4}")) {
+            // Regex pattern for "HH:mm:ss dd-MM-yyyy"
+            Toast.makeText(this, "format tanggal HH:mm:ss dd-MM-yyyy", Toast.LENGTH_LONG).show();
             return "format salah";
         }
-        if (validator.isdateValid(data))
-            return "tanggal tidak valid";
-        if (!dataTglMasuk.isEmpty())
-            if (!validator.isTanggalValid(data, dataTglMasuk))
-                return "tanggal keluar tidak valid";
+        if (!DateValidator.isdateTimeValid(data))
+            return "DateTime tidak valid";
+        if (DateValidator.isdateTimeSmaller(data, dataTglMasuk))
+            return "DateTime keluar tidak valid";
+
         return null;
     }
 }

@@ -172,17 +172,34 @@
                         android:layout_below="@id/namaHewanPenitipanContainer"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentEnd="true"
-                        android:hint="Jenis Hewan"
-                        app:endIconMode="clear_text"
-                        app:helperTextTextColor="@color/merah"
-                        app:startIconDrawable="@drawable/ic_pet_house">
+                        android:layout_marginStart="15dp"
+                        android:layout_marginVertical="8dp"
+                        app:helperTextTextColor="@color/merah">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/txtJenisHewanPenitipan"
+                        <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:maxLines="1"
-                            android:fontFamily="@font/muli" />
+                            android:layout_marginBottom="4dp"
+                            android:text="Pilih Jenis Hewan"
+                            android:fontFamily="@font/muli"
+                            android:textAllCaps="true"
+                            android:textStyle="bold" />
+
+                        <RadioGroup
+                            android:id="@+id/radioGroupJenisHewanPenitipan"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <RadioButton
+                                android:id="@+id/radioButtonKucing"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Kucing"/>
+                            <RadioButton
+                                android:id="@+id/radioButtonAnjing"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Anjing"/>
+                        </RadioGroup>
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -213,10 +230,9 @@
                         android:id="@+id/tanggalMasukPenitipanContainer"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:minWidth="190dp"
                         android:layout_below="@id/jumlahPenitipanContainer"
                         android:layout_alignParentStart="true"
-                        android:layout_marginEnd="25dp"
-                        android:layout_toStartOf="@+id/tanggalKeluarPenitipanContainer"
                         android:hint="Tanggal Masuk"
                         app:endIconMode="clear_text"
                         app:helperTextTextColor="@color/merah"
@@ -224,20 +240,22 @@
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/txtTanggalMasukPenitipan"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/muli"
-                            android:inputType="date"
+                            android:inputType="datetime"
                             android:maxLines="1" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/tanggalKeluarPenitipanContainer"
-                        android:layout_width="175dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/jumlahPenitipanContainer"
-                        android:layout_alignParentEnd="true"
+                        android:minWidth="190dp"
+                        android:layout_below="@id/tanggalMasukPenitipanContainer"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginTop="10dp"
                         android:hint="Tanggal Keluar"
                         app:endIconMode="clear_text"
                         app:helperTextTextColor="@color/merah"
@@ -245,9 +263,9 @@
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/txtTanggalKeluarPenitipan"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:inputType="date"
+                            android:inputType="datetime"
                             android:maxLines="1"
                             android:fontFamily="@font/muli" />
 

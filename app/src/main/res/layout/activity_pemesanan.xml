@@ -239,18 +239,34 @@
                         android:layout_below="@id/namaHewanPemesananContainer"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginVertical="10dp"
-                        android:hint="Jenis Hewan"
-                        app:endIconMode="clear_text"
-                        app:helperTextTextColor="@color/merah"
-                        app:startIconDrawable="@drawable/ic_pet_house">
+                        android:layout_marginStart="15dp"
+                        android:layout_marginVertical="8dp"
+                        app:helperTextTextColor="@color/merah">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/txtJenisHewanPemesanan"
+                        <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:maxLines="1"
-                            android:fontFamily="@font/muli" />
+                            android:layout_marginBottom="4dp"
+                            android:text="Pilih Jenis Hewan"
+                            android:fontFamily="@font/muli"
+                            android:textAllCaps="true"
+                            android:textStyle="bold" />
+
+                        <RadioGroup
+                            android:id="@+id/radioGroupJenisHewanPemesanan"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <RadioButton
+                                android:id="@+id/radioButtonKucing"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Kucing"/>
+                            <RadioButton
+                                android:id="@+id/radioButtonAnjing"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Anjing"/>
+                        </RadioGroup>
 
                     </com.google.android.material.textfield.TextInputLayout>
 

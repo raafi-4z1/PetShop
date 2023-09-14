@@ -1,10 +1,13 @@
 package com.example.petshop.pelengkap;
 
+import android.annotation.SuppressLint;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class DateValidator {
     int day, month, year;
@@ -34,15 +37,6 @@ public class DateValidator {
         return calendar;
     }
 
-    public boolean isTanggalValid(String inputDate, String specifiedDate) {
-        Calendar inputCalendar = getCalendarFromDate(inputDate);
-        Calendar currentCalendar = Calendar.getInstance();
-        Calendar specifiedCalendar = getCalendarFromDate(specifiedDate);
-
-        return specifiedCalendar.compareTo(inputCalendar) <= 0
-                && inputCalendar.compareTo(currentCalendar) >= 0;
-    }
-
     public boolean isdateValid(String inputDate) {
         Calendar inputCalendar = getCalendarFromDate(inputDate);
         Calendar currentCalendar = Calendar.getInstance();
@@ -70,6 +64,44 @@ public class DateValidator {
         } catch (ParseException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public static boolean isdateTimeValid(String inputDate) {
+        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
+        dateTimeFormat.setTimeZone(TimeZone.getTimeZone("Asia/Jakarta"));
+
+        try {
+            Date inputDateTime = dateTimeFormat.parse(inputDate);
+            Date currentDateTime = new Date();
+
+            if (inputDateTime != null) {
+                return inputDateTime.after(currentDateTime);
+            }
+            return false;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public static boolean isdateTimeSmaller(String inputDate1, String inputDate2) {
+        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
+        dateTimeFormat.setTimeZone(TimeZone.getTimeZone("Asia/Jakarta"));
+
+        try {
+            Date dateTime1 = dateTimeFormat.parse(inputDate1);
+            Date dateTime2 = dateTimeFormat.parse(inputDate2);
+
+            if (dateTime1 != null) {
+                return dateTime1.before(dateTime2);
+            }
+            return false;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

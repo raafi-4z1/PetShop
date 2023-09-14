@@ -126,13 +126,14 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
                     formatInput = "yyyy-MM-dd HH:mm:ss";
                     formatOutput = "HH:mm:ss dd-MM-yyyy";
 
-                    if (history.getStatus() != null)
-                        if (history.getStatus().equals("CANCEL"))
+                    if (history.getStatus() != null) {
+                        if (history.getStatus().equals("CANCEL")) {
                             txtKeteranganHistory.setVisibility(View.VISIBLE);
-
-                    if (history.getStatusTransaksi() != null)
-                        if (!history.getStatusTransaksi().equals("SUCCESS"))
-                            txtKeteranganHistory.setVisibility(View.VISIBLE);
+                        } else if (history.getStatusTransaksi() != null) {
+                            if (history.getStatusTransaksi().equals("CANCEL"))
+                                txtKeteranganHistory.setVisibility(View.VISIBLE);
+                        }
+                    }
                 }
 
                 txtItemHistory.setText(history.getNamaHewa() + " (" +
@@ -160,5 +161,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         }
 
         abstract void bind(DataHistory history);
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void clearData() {
+        histories.clear();
+        notifyDataSetChanged();
     }
 }

@@ -3,6 +3,7 @@ package com.example.petshop.transaksi;
 import static com.example.petshop.pelengkap.DateValidator.convertDateFormat;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -23,10 +24,12 @@ import java.util.Objects;
 public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
     private final Context context;
     private final ArrayList<DataClass> dataList;
+    private int mRequestCode; // Ini untuk menyimpan REQUEST_CODE
 
-    public Adapter(Context context, ArrayList<DataClass> dataList) {
+    public Adapter(Context context, ArrayList<DataClass> dataList, int requestCode) {
         this.context = context;
         this.dataList = dataList;
+        this.mRequestCode = requestCode;
     }
 
     @NonNull
@@ -63,11 +66,13 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
                 }
             }
 
-            holder.recCard.setOnClickListener(v ->
-                context.startActivity(new Intent(context, DetailItemActivity.class)
-                    .putExtra("id_hewan", dataList.get(holder.getAdapterPosition()).getIdHewan())
-                    .putExtra("pemesanan", dataList.get(holder.getAdapterPosition()).getTglPemesanan() != null))
-            );
+            holder.recCard.setOnClickListener(v -> {
+                Intent intent = new Intent(context, DetailItemActivity.class)
+                        .putExtra("id_hewan", dataList.get(holder.getAdapterPosition()).getIdHewan())
+                        .putExtra("pemesanan", dataList.get(holder.getAdapterPosition()).getTglPemesanan() != null)
+                        .putExtra("refresh", true);
+                ((Activity) context).startActivityForResult(intent, mRequestCode);
+            });
 
         } else {
             holder.txtTanggal.setVisibility(View.GONE);

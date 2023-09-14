@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.WindowManager;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,7 +37,9 @@ import java.util.TimeZone;
 
 public class PemesananActivity extends AppCompatActivity {
     private LocalStorage localStorage;
-    private TextInputEditText fullName, email, phone, alamat, namaHewan, jenis, jumlah, tglPesan;
+    private TextInputEditText fullName, email, phone, alamat, namaHewan, jumlah, tglPesan;
+    private RadioGroup jenis;
+    private RadioButton selectedRadioButton;
     private TextInputLayout fullNameContainer, emailContainer, phoneContainer, alamatContainer, namaHewanContainer, jenisContainer, jumlahContainer, tglPesanContainer;
 
     @Override
@@ -60,7 +64,7 @@ public class PemesananActivity extends AppCompatActivity {
         phone = findViewById(R.id.txtPhonePemesanan);
         alamat = findViewById(R.id.txtAlamatPemesanan);
         namaHewan = findViewById(R.id.txtNamaHewanPemesanan);
-        jenis = findViewById(R.id.txtJenisHewanPemesanan);
+        jenis = findViewById(R.id.radioGroupJenisHewanPemesanan);
         jumlah =  findViewById(R.id.txtJumlahPemesanan);
         tglPesan = findViewById(R.id.txtTanggalPemesanan);
 
@@ -80,10 +84,27 @@ public class PemesananActivity extends AppCompatActivity {
     private void setTV() {
         TextView nameProfile = findViewById(R.id.txtNameUser);
         nameProfile.setText(localStorage.getNama());
-        fullName.setText(localStorage.getNama());
-        email.setText(localStorage.getEmail());
-        phone.setText(localStorage.getTelepon());
-        alamat.setText(localStorage.getAlamat());
+
+        if (getIntent().getBooleanExtra("jadwalkanLagi", false)) {
+            fullName.setText(getIntent().getStringExtra("namaPemesan"));
+            email.setText(getIntent().getStringExtra("emailPemesan"));
+            phone.setText(getIntent().getStringExtra("phonePemesan"));
+            alamat.setText(getIntent().getStringExtra("alamatPemesan"));
+
+            namaHewan.setText(getIntent().getStringExtra("namaHewan"));
+            jumlah.setText(getIntent().getStringExtra("jumlahHewan"));
+
+            if (getIntent().getStringExtra("jenisHewan").equals("Kucing")) {
+                jenis.check(R.id.radioButtonKucing);
+            } else {
+                jenis.check(R.id.radioButtonAnjing);
+            }
+        } else {
+            fullName.setText(localStorage.getNama());
+            email.setText(localStorage.getEmail());
+            phone.setText(localStorage.getTelepon());
+            alamat.setText(localStorage.getAlamat());
+        }
     }
 
     private void clickTanggal() {
@@ -144,7 +165,7 @@ public class PemesananActivity extends AppCompatActivity {
             params.put("phone", Objects.requireNonNull(phone.getText()).toString());
             params.put("alamat", Objects.requireNonNull(alamat.getText()).toString());
             params.put("nama_hewan", Objects.requireNonNull(namaHewan.getText()).toString());
-            params.put("jenis_hewan", Objects.requireNonNull(jenis.getText()).toString());
+            params.put("jenis_hewan", selectedRadioButton.getText().toString());
             params.put("jumlah", Objects.requireNonNull(jumlah.getText()).toString());
             params.put("tgl_pesan", convertDateFormat(Objects.requireNonNull(tglPesan.getText()).toString()));
         } catch (JSONException e) {
@@ -303,10 +324,11 @@ public class PemesananActivity extends AppCompatActivity {
     }
 
     private CharSequence validJenis() {
-        String data = String.valueOf(jenis.getText());
-
-        if (data.isEmpty())
+        int selectRBById = jenis.getCheckedRadioButtonId();
+        if (selectRBById == -1)
             return "required";
+
+        selectedRadioButton = findViewById(selectRBById);
         return null;
     }
 

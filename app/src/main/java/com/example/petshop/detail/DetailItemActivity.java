@@ -8,6 +8,7 @@ import static com.example.petshop.pelengkap.StringPhone.formatPhone;
 import static com.example.petshop.pelengkap.StringPhone.phoneNumber;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -82,7 +83,7 @@ public class DetailItemActivity extends AppCompatActivity implements Transaction
 
         TextView nameProfile = findViewById(R.id.txtNameUser);
         nameProfile.setText(localStorage.getNama());
-        findViewById(R.id.detail_back_button).setOnClickListener(view -> finish());
+        findViewById(R.id.detail_back_button).setOnClickListener(view -> onBackPressed());
 
         myHandlerThread = new MyHandlerThread(DetailItemActivity.this);
         getData();
@@ -99,7 +100,7 @@ public class DetailItemActivity extends AppCompatActivity implements Transaction
                 + "-" + System.currentTimeMillis();
         prices = jumlahItem * harga;
 
-        updateTransaksi(orderId);
+        updateTransaksi(orderId, prices);
 
         // Midtrans (1.26.0-SANDBOX) / (2.0.0-SANDBOX)
         TransactionRequest transactionRequest = new TransactionRequest(orderId, prices);
@@ -382,18 +383,18 @@ public class DetailItemActivity extends AppCompatActivity implements Transaction
 
             if (!statusRes.equals("SUCCESS") && !stsPesRes)
                 if (Objects.requireNonNull(String2Date(LocalDateTime.now().format(DateTimeFormatter
-                        .ofPattern("yyyy-MM-dd")))).after(String2Date(tglMasRes))
+                        .ofPattern("yyyy-MM-dd HH:mm:ss")))).after(String2Date(tglMasRes))
                 ) {
                     linearLayoutPem.removeView(btnBayar);
                     if (Objects.requireNonNull(String2Date(LocalDateTime.now()
-                                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
                             )).after(String2Date(tglKelRes)))
                         linearLayoutPem.removeView(btnCancel);
                 }
 
             TextView tglKeluar = findViewById(R.id.txtTglKeluarDetail);
-            tglMasuk.setText(convertDateFormat(tglMasRes, "yyyy-MM-dd", "dd-MM-yyyy"));
-            tglKeluar.setText(convertDateFormat(tglKelRes, "yyyy-MM-dd", "dd-MM-yyyy"));
+            tglMasuk.setText(convertDateFormat(tglMasRes, "yyyy-MM-dd HH:mm:ss", "HH:mm:ss dd-MM-yyyy"));
+            tglKeluar.setText(convertDateFormat(tglKelRes, "yyyy-MM-dd HH:mm:ss", "HH:mm:ss dd-MM-yyyy"));
         }
     }
 
@@ -414,7 +415,16 @@ public class DetailItemActivity extends AppCompatActivity implements Transaction
         if (pemesanan)
             to = PemesananActivity.class;
 
-        startActivity(new Intent(getApplicationContext(), to));
+        startActivity(new Intent(getApplicationContext(), to)
+                .putExtra("jadwalkanLagi", true)
+                .putExtra("namaPemesan", namaPemesan)
+                .putExtra("emailPemesan", emailPemesan)
+                .putExtra("phonePemesan", phonePemesan)
+                .putExtra("alamatPemesan", alamatPemesan)
+                .putExtra("namaHewan", namaHewan)
+                .putExtra("jenisHewan", jenisHewan)
+                .putExtra("jumlahHewan", jumlahHewan)
+        );
         finish();
     }
 
@@ -448,11 +458,12 @@ public class DetailItemActivity extends AppCompatActivity implements Transaction
         }
     }
 
-    private void updateTransaksi(String invoice) {
+    private void updateTransaksi(String invoice, Double prices) {
         JSONObject params = new JSONObject();
         try {
             params.put("invoice", invoice);
             params.put("id_hewan", idHewan);
+            params.put("total_harga", prices);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -574,6 +585,15 @@ public class DetailItemActivity extends AppCompatActivity implements Transaction
             });
         });
         thread.start();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getIntent().getBooleanExtra("refresh", false)) {
+            Intent resultIntent = new Intent();
+            setResult(Activity.RESULT_OK, resultIntent);
+        }
+        super.onBackPressed(); // Menyelesaikan aktivitas.
     }
 
     @Override

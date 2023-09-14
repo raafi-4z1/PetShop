@@ -9,7 +9,11 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +29,8 @@ import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.format.DateTimeFormatter;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -50,6 +56,8 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
         nameProfile.setText(localStorage.getNama());
         isHistory = getIntent().getBooleanExtra("is_history", true);
 
+        LinearLayout linearLayoutPilihWaktu = findViewById(R.id.linearLayoutPilihWaktu);
+
         if (!isHistory) {
             TextView judul = findViewById(R.id.judulLayoutHistory);
             TextView deskripsi = findViewById(R.id.deskripsiLayoutHistory);
@@ -57,8 +65,11 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
             judul.setText("Jadwal");
             deskripsi.setText("Jadwal Anda");
             historyAdapter = new HistoryAdapter(this, false);
+            linearLayoutPilihWaktu.setVisibility(View.GONE);
         } else {
+            selectWaktu();
             historyAdapter = new HistoryAdapter(this, true);
+            linearLayoutPilihWaktu.setVisibility(View.VISIBLE);
         }
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view_history);
@@ -69,7 +80,44 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
         recyclerView.setAdapter(historyAdapter);
 
         findViewById(R.id.history_back_button).setOnClickListener(view -> finish());
-        getPemesanan();
+        getPemesanan(0);
+    }
+
+    private static final int ALL = 0, WEEK1 = 1, WEEKS2 = 2, WEEKS3 = 3, WEEKS4 = 4;
+    private void selectWaktu() {
+        String[] item = {"all", "1 week before", "2 weeks before", "3 weeks before", "4 weeks before"};
+        AutoCompleteTextView autoCompleteTextView;
+        ArrayAdapter<String> adapterItems;
+
+        autoCompleteTextView = findViewById(R.id.autoCompleteTxt);
+        adapterItems = new ArrayAdapter<>(this, R.layout.list_item_history, item);
+        autoCompleteTextView.setAdapter(adapterItems);
+
+        autoCompleteTextView.setOnItemClickListener((adapterView, view, i, l) -> getPemesanan(i));
+    }
+
+    private String getTanggal(int i) {
+        String hasil = "all";
+
+        switch (i) {
+            case ALL:
+                hasil = "all";
+                break;
+            case WEEK1:
+                hasil = LocalDateTime.now().minusWeeks(WEEK1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                break;
+            case WEEKS2:
+                hasil = LocalDateTime.now().minusWeeks(WEEKS2).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                break;
+            case WEEKS3:
+                hasil = LocalDateTime.now().minusWeeks(WEEKS3).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                break;
+            case WEEKS4:
+                hasil = LocalDateTime.now().minusWeeks(WEEKS4).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                break;
+        }
+
+        return hasil;
     }
 
     @Override
@@ -77,19 +125,32 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
         Log.d("TAG", "onItemClick: klik RecyclerView");
     }
 
-    private void getPemesanan() {
-        String url;
+    private void getPemesanan(int tanggalTerpilih) {
+        String url, dataParams = "null";
+
         if (isHistory) {
+            JSONObject params = new JSONObject();
+            try {
+                params.put("tanggal_terpilih", getTanggal(tanggalTerpilih));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            dataParams = params.toString();
+
             url = getString(R.string.api_server) + "/user/viewpemesanan";
         }
         else {
             url = getString(R.string.api_server) + "/user/viewjadwalpemesanan";
         }
 
+        String finalData = dataParams;
         @SuppressLint("NotifyDataSetChanged")
         Thread thread = new Thread(() -> {
             Http http = new Http(this, url);
             http.setMethod("post");
+            if (isHistory) {
+                http.setData(finalData);
+            }
             http.setToken(true);
             http.send();
 
@@ -98,6 +159,7 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
                 switch (code) {
                     case 200:
                     case 204:
+                        historyAdapter.clearData();
                         historyAdapter.addSingleHistory(new DataHistory(
                                 "penanda",
                                 null,
@@ -133,7 +195,7 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
                             ));
                         }
 
-                        getPenitipan();
+                        getPenitipan(finalData);
 
                         break;
                     case 401:
@@ -161,7 +223,7 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
         thread.start();
     }
 
-    private void getPenitipan() {
+    private void getPenitipan(String finalData) {
         String url;
         if (isHistory) {
             url = getString(R.string.api_server) + "/user/viewpenitipan";
@@ -173,6 +235,9 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
         Thread thread = new Thread(() -> {
             Http http = new Http(this, url);
             http.setMethod("post");
+            if (isHistory) {
+                http.setData(finalData);
+            }
             http.setToken(true);
             http.send();
 
@@ -216,9 +281,9 @@ public class HistoryActivity extends AppCompatActivity implements ItemClickListe
                             ));
                         }
 
-                        if (isHistory) {
-                            getTransaksi();
-                        } else
+//                        if (isHistory) {
+//                            getTransaksi();
+//                        } else
                             dialog.dismiss();
 
                         break;

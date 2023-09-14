@@ -4,16 +4,16 @@ import static com.example.petshop.pelengkap.Alert.alertFail;
 import static com.example.petshop.pelengkap.Alert.kode401;
 import static com.example.petshop.pelengkap.Alert.loading;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.petshop.LoginSignup.LoginActivity;
 import com.example.petshop.R;
@@ -29,6 +29,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class TransaksiLayout extends AppCompatActivity {
+    private static final int REQUEST_CODE = 1;
     private ArrayList<DataClass> dataList;
     private LocalStorage localStorage;
     private Adapter adapter = null;
@@ -52,7 +53,7 @@ public class TransaksiLayout extends AppCompatActivity {
         recyclerView.setLayoutManager(gridLayoutManager);
 
         dataList = new ArrayList<>();
-        adapter = new Adapter(this, dataList);
+        adapter = new Adapter(this, dataList, REQUEST_CODE);
         recyclerView.setAdapter(adapter);
 
         findViewById(R.id.transaksi_back_button).setOnClickListener(view -> finish());
@@ -128,5 +129,19 @@ public class TransaksiLayout extends AppCompatActivity {
             });
         });
         thread.start();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        refreshActivity();
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private void refreshActivity() {
+        dialog.show();
+        dataList.clear();
+        adapter.notifyDataSetChanged();
+        getData();
     }
 }
