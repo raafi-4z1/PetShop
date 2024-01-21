@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace 'com.example.petshop'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.example.petshop"
         minSdk 21
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -44,4 +44,10 @@ dependencies {
     // payment gateway midtrans (1.26.0-SANDBOX) / (2.0.0-SANDBOX)
     implementation 'com.midtrans:uikit:2.0.0-SANDBOX'
 //    implementation 'com.midtrans:uikit:1.23.1'
+
+    // ViewModel & LiveData
+    def lifecycle_version = "2.7.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
+
 }

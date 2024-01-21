@@ -12,9 +12,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.petshop.LoginSignup.LoginActivity;
-import com.example.petshop.LoginSignup.SignUpActivity;
-import com.example.petshop.pelengkap.LocalStorage;
+import com.example.petshop.ui.LoginSignup.LoginActivity;
+import com.example.petshop.ui.LoginSignup.SignUpActivity;
+import com.example.petshop.data.local.LocalStorage;
+import com.example.petshop.ui.MainActivity;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import org.threeten.bp.LocalDateTime;

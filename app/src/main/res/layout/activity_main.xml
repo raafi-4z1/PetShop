@@ -8,7 +8,7 @@
     android:transitionName="transition_main_btn"
     android:background="@color/biru_putih"
     android:scrollbars="none"
-    tools:context=".MainActivity"
+    tools:context=".ui.MainActivity"
     tools:ignore="ScrollViewCount">
 
     <RelativeLayout

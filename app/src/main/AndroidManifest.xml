@@ -19,37 +19,37 @@
         tools:replace="android:allowBackup,android:usesCleartextTraffic"
         tools:targetApi="33" >
         <activity
-            android:name=".detail.DetailItemActivity"
+            android:name=".ui.detail.DetailItemActivity"
             android:exported="false" />
         <activity
-            android:name=".profile.UpdatePasswordActivity"
+            android:name=".ui.profile.UpdatePasswordActivity"
             android:exported="false" />
         <activity
-            android:name=".profile.UpdateProfileActivity"
+            android:name=".ui.profile.UpdateProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".profile.ProfileActivity"
+            android:name=".ui.profile.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".history.HistoryActivity"
+            android:name=".ui.history.HistoryActivity"
             android:exported="false" />
         <activity
-            android:name=".transaksi.TransaksiLayout"
+            android:name=".ui.transaksi.TransaksiLayout"
             android:exported="false" />
         <activity
-            android:name=".penitipan.PenitipanActivity"
+            android:name=".ui.penitipan.PenitipanActivity"
             android:exported="false" />
         <activity
-            android:name=".pemesanan.PemesananActivity"
+            android:name=".ui.pemesanan.PemesananActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginSignup.SignUpActivity"
+            android:name=".ui.LoginSignup.SignUpActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginSignup.LoginActivity"
+            android:name=".ui.LoginSignup.LoginActivity"
             android:exported="false" />
         <activity
             android:name=".WelcomeActivity"
